@@ -65,6 +65,7 @@ def main():
         keyword = input("What is KEYWORD?\n")
         graph.draw_graph(m_data, args.graph, keyword)
         sys.exit(1)
+    graph.RelativePayment(m_data)
 
     # check option
     # search for keyword in place
