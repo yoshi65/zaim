@@ -29,7 +29,8 @@ def draw_graph(data, month, name):
     output_name = os.path.join(output_path, name + "_" + month + ".pdf")
 
     # arrange data
-    NumofDays = calendar.monthrange(int(re.sub(r"-.*$", "", month)), int(re.sub(r"^.*-", "", month)))[1]
+    NumofDays = calendar.monthrange(
+        int(re.sub(r"-.*$", "", month)), int(re.sub(r"^.*-", "", month)))[1]
     date_list = pd.date_range(start=month + "-01", periods=NumofDays, freq='D')
     data['date'] = data['date'].astype(datetime)
     data = data.set_index('date')
@@ -53,4 +54,3 @@ def draw_graph(data, month, name):
     plt.ylabel(r"money [yen]", fontsize=16)
     plt.tight_layout()
     plt.savefig(output_name)
-

@@ -62,7 +62,8 @@ def main():
 
     # draw graph
     if not args.graph == 0:
-        graph.draw_graph(m_data, args.graph, '食費')
+        keyword = input("What is KEYWORD?\n")
+        graph.draw_graph(m_data, args.graph, keyword)
         sys.exit(1)
 
     # check option
