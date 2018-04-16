@@ -37,13 +37,13 @@ def draw_graph(data, month, name):
     sum_list = data[data['category'] == name].resample('D').sum()
     sum_list = sum_list[month + '-01':month + '-' + str(NumofDays)]
     sum_list = sum_list.fillna(0)
-    print(str(sum_list["amount"].sum(axis=0)))
 
     # draw graph
     plt.rc('text', usetex=True)
     plt.rc('font', family='serif')
+    width=0.3
     ax = plt.subplot()
-    ax.plot(sum_list.index, sum_list['amount'], label=name)
+    ax.bar(sum_list.index, sum_list['amount'], width=0.3)
     xfmt = mdates.DateFormatter("%y/%m/%d")
     xloc = mdates.DayLocator()
     ax.xaxis.set_major_locator(xloc)
