@@ -67,7 +67,8 @@ def RelativePayment(data):
     # arrange data
     month_list = ["2017-09", "2017-10", "2017-11", "2017-12", "2018-01", "2018-02", "2018-03"]
     RelaPayment_list = []
-    payment_list = []
+    # payment_list = []
+    RelaIncome_list = []
     data['date'] = data['date'].astype(datetime)
     data = data.set_index('date')
     for month in month_list:
@@ -85,10 +86,18 @@ def RelativePayment(data):
         pay_list = pay_list[month + '-01':month + '-' + str(NumofDays)]
         pay_list = pay_list.fillna(0)
 
+        # Income calc
+        income_list = data[data["mode"] == "income"].resample('D').sum()
+        income_list = income_list[month + '-01':month + '-' + str(NumofDays)]
+        income_list = income_list.fillna(0)
+
         RelaPayment = pay_list["amount"].sum(
             axis=0) - sum_list["amount"].sum(axis=0)
-        payment_list.append(pay_list["amount"].sum(axis=0))
+        RelaIncome = income_list["amount"].sum(
+            axis=0) - sum_list["amount"].sum(axis=0)
+        # payment_list.append(pay_list["amount"].sum(axis=0))
         RelaPayment_list.append(RelaPayment)
+        RelaIncome_list.append(RelaIncome)
 
     # draw graph
     ran = np.arange(len(month_list))
@@ -97,7 +106,7 @@ def RelativePayment(data):
     plt.rc('font', family='serif')
     ax = plt.subplot()
     ax.bar(ran, RelaPayment_list, width=width, color="blue", label="Relative Payment")
-    ax.bar(ran + width, payment_list, width=width, color="red", label="payment")
+    ax.bar(ran + width, RelaIncome_list, width=width, color="red", label="Relative Income")
     plt.xlabel(r"month", fontsize=16)
     plt.ylabel(r"money [yen]", fontsize=16)
     plt.legend(loc="best")
