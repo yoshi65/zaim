@@ -54,6 +54,7 @@ def draw_graph(data, month, name):
     plt.xlabel(r"date", fontsize=16)
     plt.ylabel(r"money [yen]", fontsize=16)
     plt.tight_layout()
+    plt.show()
     plt.savefig(output_name)
 
 

@@ -51,6 +51,8 @@ def main():
     c_data = category()
     v_data = verify()
     # m_data = m_data.set_index('date')
+    pay_str = "payment"
+    inc_str = "income"
 
     # replace category_id with category_name
     for i in range(0, len(c_data.index)):
@@ -60,6 +62,13 @@ def main():
 
     # draw category graph
     if not args.graph == 0:
+    # write category list
+        print("CATEGORY LIST")
+        print(pay_str)
+        print(' '.join(list(c_data[c_data["mode"] == pay_str]["name"])))
+        print(inc_str)
+        print(' '.join(list(c_data[c_data["mode"] == inc_str]["name"])))
+        print()
         keyword = input("What is CATEGORY?\n")
         graph.draw_graph(m_data, args.graph, keyword)
         sys.exit(1)
