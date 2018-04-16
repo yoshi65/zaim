@@ -58,17 +58,19 @@ def main():
     m_data = pd.concat([m_data, tmp], axis=1).rename(
         columns={"category_id": "category"})
 
-    # draw graph
+    # draw category graph
     if not args.graph == 0:
         keyword = input("What is CATEGORY?\n")
         graph.draw_graph(m_data, args.graph, keyword)
         sys.exit(1)
+
+    # draw relative payment graph
     graph.RelativePayment(m_data)
 
     # check option
     # search for keyword in place
     if args.place:
-        keyword = input("What is KEYWORD?\n")
+        keyword = input("What is location KEYWORD?\n")
         m_data = m_data[m_data["place"].str.contains(keyword)]
     # set movement of money
     m_data = m_data[m_data["mode"].str.contains(
