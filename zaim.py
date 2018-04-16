@@ -35,14 +35,12 @@ def main():
     paresr = argparse.ArgumentParser(description="analyze zaim from CUI")
     paresr.add_argument('-p', '--place', action='store_true',
                         help='search for KEYWORD in place', default=False)
-    paresr.add_argument('-t', '--test-case',
-                        action='store_true', help='test for -p option')
     paresr.add_argument('-m', '--mode', action='store', choices=[
                         'payment', 'income', 'transfer'], help='choice kind of movement of money', default='payment')
     paresr.add_argument('-n', '--num', action='store',
                         type=int, help='decide drawing number of movement', default=10)
     paresr.add_argument('-g', '--graph', action='store',
-                        type=str, help='draw graph (ex. 2018-1)', default=0)
+                        type=str, help='select category and draw graph in a month (ex. -g 2018-01)', default=0)
     # graph option (type(int))
     args = paresr.parse_args()
 
@@ -62,7 +60,7 @@ def main():
 
     # draw graph
     if not args.graph == 0:
-        keyword = input("What is KEYWORD?\n")
+        keyword = input("What is CATEGORY?\n")
         graph.draw_graph(m_data, args.graph, keyword)
         sys.exit(1)
     graph.RelativePayment(m_data)
@@ -70,11 +68,7 @@ def main():
     # check option
     # search for keyword in place
     if args.place:
-        # test setting keyword
-        if args.test_case:
-            keyword = "ラポ"
-        else:
-            keyword = input("What is KEYWORD?\n")
+        keyword = input("What is KEYWORD?\n")
         m_data = m_data[m_data["place"].str.contains(keyword)]
     # set movement of money
     m_data = m_data[m_data["mode"].str.contains(
