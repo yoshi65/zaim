@@ -65,7 +65,13 @@ def RelativePayment(data):
     AdRepayment = "立替金返済"
 
     # arrange data
-    month_list = ["2017-09", "2017-10", "2017-11", "2017-12", "2018-01", "2018-02", "2018-03"]
+    month_list = []
+    y = 2017
+    for m in range(9, 13):
+        month_list.append(str(str(y) + "-" + str(m).zfill(2)))
+    y = 2018
+    for m in range(1, int(datetime.now().strftime("%m")) + 1):
+        month_list.append(str(str(y) + "-" + str(m).zfill(2)))
     RelaPayment_list = []
     # payment_list = []
     RelaIncome_list = []
