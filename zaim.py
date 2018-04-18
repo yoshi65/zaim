@@ -18,7 +18,7 @@ import pandas.plotting._converter as pandacnv
 from IPython.display import display
 
 # myfunc
-import graph
+from graph import Graph
 pandacnv.register()
 
 # authorize
@@ -50,7 +50,6 @@ def main():
     m_data = money().loc[:, ['amount', 'date', 'mode', 'place']]
     c_data = category()
     v_data = verify()
-    # m_data = m_data.set_index('date')
     pay_str = "payment"
     inc_str = "income"
 
@@ -59,6 +58,9 @@ def main():
         tmp = tmp.replace(c_data.loc[i, "id"], c_data.loc[i, "name"])
     m_data = pd.concat([m_data, tmp], axis=1).rename(
         columns={"category_id": "category"})
+
+    # constructor
+    graph = Graph(m_data)
 
     # draw category graph
     if not args.graph == 0:
@@ -70,11 +72,11 @@ def main():
         print(' '.join(list(c_data[c_data["mode"] == inc_str]["name"])))
         print()
         keyword = input("What is CATEGORY?\n")
-        graph.draw_graph(m_data, args.graph, keyword)
+        graph.DrawGraph(args.graph, keyword)
         sys.exit(1)
 
     # draw relative payment graph
-    graph.RelativePayment(m_data)
+    graph.RelativePayment()
 
     # check option
     # search for keyword in place
