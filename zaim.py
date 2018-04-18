@@ -45,31 +45,31 @@ def main():
     args = paresr.parse_args()
 
     # variable
-    m_data = money()
-    tmp = m_data['category_id']
-    m_data = money().loc[:, ['amount', 'date', 'mode', 'place']]
-    c_data = category()
-    v_data = verify()
-    pay_str = "payment"
-    inc_str = "income"
+    Mdata = money()
+    tmp = Mdata['category_id']
+    Mdata = money().loc[:, ['amount', 'date', 'mode', 'place']]
+    Cdata = category()
+    Vdata = verify()
+    PayStr = "payment"
+    IncStr = "income"
 
     # replace category_id with category_name
-    for i in range(0, len(c_data.index)):
-        tmp = tmp.replace(c_data.loc[i, "id"], c_data.loc[i, "name"])
-    m_data = pd.concat([m_data, tmp], axis=1).rename(
+    for i in range(0, len(Cdata.index)):
+        tmp = tmp.replace(Cdata.loc[i, "id"], Cdata.loc[i, "name"])
+    Mdata = pd.concat([Mdata, tmp], axis=1).rename(
         columns={"category_id": "category"})
 
     # constructor
-    graph = Graph(m_data)
+    graph = Graph(Mdata)
 
     # draw category graph
     if not args.graph == 0:
         # write category list
         print("CATEGORY LIST")
-        print(pay_str)
-        print(' '.join(list(c_data[c_data["mode"] == pay_str]["name"])))
-        print(inc_str)
-        print(' '.join(list(c_data[c_data["mode"] == inc_str]["name"])))
+        print(PayStr)
+        print(' '.join(list(Cdata[Cdata["mode"] == PayStr]["name"])))
+        print(IncStr)
+        print(' '.join(list(Cdata[Cdata["mode"] == IncStr]["name"])))
         print()
         keyword = input("What is CATEGORY?\n")
         graph.DrawGraph(args.graph, keyword)
@@ -82,40 +82,40 @@ def main():
     # search for keyword in place
     if args.place:
         keyword = input("What is location KEYWORD?\n")
-        m_data = m_data[m_data["place"].str.contains(keyword)]
+        Mdata = Mdata[Mdata["place"].str.contains(keyword)]
     # set movement of money
-    m_data = m_data[m_data["mode"].str.contains(
+    Mdata = Mdata[Mdata["mode"].str.contains(
         args.mode)].reset_index(drop=True)
 
     # output
-    display(m_data.loc[:(args.num - 1), :])
+    display(Mdata.loc[:(args.num - 1), :])
 
 
 def verify():
     endpoint = "https://api.zaim.net/v2/home/user/verify"
 
     r = requests.get(endpoint, auth=auth)
-    v_data = pd.read_json(json.dumps(r.json()))
+    Vdata = pd.read_json(json.dumps(r.json()))
 
-    return v_data
+    return Vdata
 
 
 def category():
     endpoint = "https://api.zaim.net/v2/home/category"
 
     r = requests.get(endpoint, auth=auth)
-    c_data = pd.read_json(json.dumps(r.json()["categories"]))
+    Cdata = pd.read_json(json.dumps(r.json()["categories"]))
 
-    return c_data
+    return Cdata
 
 
 def money():
     endpoint = "https://api.zaim.net/v2/home/money"
 
     r = requests.get(endpoint, auth=auth)
-    m_data = pd.read_json(json.dumps(r.json()["money"]))
+    Mdata = pd.read_json(json.dumps(r.json()["money"]))
 
-    return m_data
+    return Mdata
 
 
 if __name__ == "__main__":
