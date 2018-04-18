@@ -64,7 +64,7 @@ def main():
 
     # draw category graph
     if not args.graph == 0:
-    # write category list
+        # write category list
         print("CATEGORY LIST")
         print(pay_str)
         print(' '.join(list(c_data[c_data["mode"] == pay_str]["name"])))
