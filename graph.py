@@ -33,30 +33,23 @@ class Graph():
 
         # trans category
         self.IncDict = {
-            "給与所得" : "Income",
-            "立替金返済" : "Relative Income",
-            "賞与" : "Bonus",
-            "臨時収入" : "Extraordinary Income",
-            "事業所得" : "Business Income",
-            "その他" : "Others",
-            "仕送り" : "Remittance"
+            "Income" : ["給与所得"],
+            "Relative Income" : ["立替金返済"],
+            "Remittance" : ["仕送り"],
+            "Extraordinary Income" : ["臨時収入"],
+            "Others" : ["賞与", "事業所得", "その他"]
         }
         self.PayDict = {
-            "食費" : "Food",
-            "日用雑貨" : "Daily Goods",
-            "交通" : "Transportation", 
-            "交際費" : "Relationship",
-            "エンタメ" : "Entertainment",
-            "教育・教養" : "Education",
-            "美容・衣服" : "Beayty, Clothes",
-            "医療・保険" : "Medical",
-            "通信" : "Communication",
-            "水道・光熱" : "Utility",
-            "住まい" : "House",
-            "クルマ" : "Car",
-            "税金" : "Tax",
-            "大型出費" : "Large Spending",
-            "その他" : "Others"
+            "Food" : ["食費"],
+            "Daily Goods" : ["日用雑貨"],
+            "Transportation" : ["交通"],
+            "Relationship" : ["交際費"],
+            "Entertainment" : ["エンタメ"],
+            "Education" : ["教育・教養"],
+            "Beauty, Clothes" : ["美容・衣服"],
+            "Large Spending" : ["大型出費"],
+            "Utility" : ["医療・保険", "クルマ", "水道・光熱", "通信", "住まい"],
+            "Others" : ["税金", "その他"]
         }
 
         # setting matplotlib
@@ -175,9 +168,11 @@ class Graph():
         for month in monthList:
             # calc Income
             IncomeMonth = []
-            for InCate in self.IncomeCategories:
-                IncomeMonth.append(self.MakeList("category", InCate, month)[
-                                   "amount"].sum(axis=0))
+            for InCateList in self.IncDict.values():
+                Amount = 0
+                for InCate in InCateList:
+                    Amount += self.MakeList("category", InCate, month)["amount"].sum(axis=0)
+                IncomeMonth.append(Amount)
             if IncomeList is None:
                 IncomeList = pd.DataFrame(list([IncomeMonth]))
             else:
@@ -185,16 +180,18 @@ class Graph():
 
             # calc Payment
             PaymentMonth = []
-            for PayCate in self.PaymentCategories:
-                PaymentMonth.append(self.MakeList(
-                    "category", PayCate, month)["amount"].sum(axis=0))
+            for PayCateList in self.PayDict.values():
+                Amount = 0
+                for PayCate in PayCateList:
+                    Amount += self.MakeList("category", PayCate, month)["amount"].sum(axis=0)
+                PaymentMonth.append(Amount)
             if PaymentList is None:
                 PaymentList = pd.DataFrame(list([PaymentMonth]))
             else:
                 PaymentList = PaymentList.append(list([PaymentMonth]))
 
-        IncomeList.columns = self.IncomeCategories
-        PaymentList.columns = self.PaymentCategories
+        IncomeList.columns = self.IncDict.keys()
+        PaymentList.columns = self.PayDict.keys()
 
         # draw graph
         ran = np.arange(len(monthList))
@@ -204,21 +201,21 @@ class Graph():
 
         # draw Income graph
         before = np.zeros(len(monthList))
-        for InCate in self.IncomeCategories:
-            ax.bar(ran + width, IncomeList[InCate], width=width, label=self.IncDict[InCate], bottom=before)
+        for InKey in self.IncDict.keys():
+            ax.bar(ran + width, IncomeList[InKey], width=width, label=InKey, bottom=before)
             if before.sum() == 0:
-                before = IncomeList[InCate]
+                before = IncomeList[InKey]
             else:
-                before = before.add(IncomeList[InCate])
+                before = before.add(IncomeList[InKey])
 
         # draw Payment graph
         before = np.zeros(len(monthList))
-        for PayCate in self.PaymentCategories:
-            ax.bar(ran, PaymentList[PayCate], width=width, label=self.PayDict[PayCate], bottom=before)
+        for PayKey in self.PayDict.keys():
+            ax.bar(ran, PaymentList[PayKey], width=width, label=PayKey, bottom=before)
             if before.sum() == 0:
-                before = PaymentList[PayCate]
+                before = PaymentList[PayKey]
             else:
-                before = before.add(PaymentList[PayCate])
+                before = before.add(PaymentList[PayKey])
 
         plt.xlabel(r"month", fontsize=16)
         plt.ylabel(r"money [yen]", fontsize=16)
