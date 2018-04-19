@@ -137,10 +137,10 @@ class Graph():
         width = 0.3
         fig = plt.figure()
         ax = fig.add_subplot(1, 1, 1)
-        ax.bar(ran, RelaPaymentList, width=width,
-               color="blue", label="Relative Payment")
-        ax.bar(ran + width, RelaIncomeList, width=width,
+        ax.bar(ran, RelaIncomeList, width=width,
                color="red", label="Relative Income")
+        ax.bar(ran + width, RelaPaymentList, width=width,
+               color="blue", label="Relative Payment")
         plt.xlabel(r"month", fontsize=16)
         plt.ylabel(r"money [yen]", fontsize=16)
         plt.legend(loc="best")
