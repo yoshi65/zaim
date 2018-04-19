@@ -197,13 +197,14 @@ class Graph():
         # draw graph
         ran = np.arange(len(monthList))
         width = 0.3
-        fig = plt.figure()
+        fig = plt.figure(figsize=(8, 5))
         ax = fig.add_subplot(1, 1, 1)
 
         # draw Income graph
         before = np.zeros(len(monthList))
+        IncLabel = []
         for InKey in self.IncDict.keys():
-            ax.bar(ran + width, IncomeList[InKey], width=width, label=InKey, bottom=before)
+            IncLabel.append(ax.bar(ran, IncomeList[InKey], width=width, label=InKey, bottom=before))
             if before.sum() == 0:
                 before = IncomeList[InKey]
             else:
@@ -211,16 +212,20 @@ class Graph():
 
         # draw Payment graph
         before = np.zeros(len(monthList))
+        PayLabel = []
         for PayKey in self.PayDict.keys():
-            ax.bar(ran, PaymentList[PayKey], width=width, label=PayKey, bottom=before)
+            PayLabel.append(ax.bar(ran + width, PaymentList[PayKey], width=width, label=PayKey, bottom=before))
             if before.sum() == 0:
                 before = PaymentList[PayKey]
             else:
                 before = before.add(PaymentList[PayKey])
 
+        plt.title(r"Monthly Category Graph(income and payment)")
         plt.xlabel(r"month", fontsize=16)
         plt.ylabel(r"money [yen]", fontsize=16)
-        plt.legend(bbox_to_anchor=(1.05, 1), loc="upper left")
+        leg1 = plt.legend(handles=IncLabel, bbox_to_anchor=(1.05, 1), loc="upper left", title="income category")
+        ax = plt.gca().add_artist(leg1)
+        leg2 = plt.legend(handles=PayLabel, bbox_to_anchor=(1.05, 0), loc="lower left", title="payment category")
         plt.xticks(ran + width / 2, monthList)
         plt.tight_layout()
         plt.savefig(output_name)
