@@ -20,11 +20,48 @@ from datetime import datetime
 
 class Graph():
 
-    def __init__(self, Data):
+    def __init__(self, Data, Categories):
         # read Data
         self.Data = Data
         self.Data['date'] = self.Data['date'].astype(datetime)
         self.Data = self.Data.set_index('date')
+        self.Categories = Categories
+        self.PaymentCategories = list(
+            self.Categories[self.Categories["mode"] == "payment"]["name"])
+        self.IncomeCategories = list(
+            self.Categories[self.Categories["mode"] == "income"]["name"])
+
+        # trans category
+        self.IncDict = {
+            "給与所得" : "Income",
+            "立替金返済" : "Relative Income",
+            "賞与" : "Bonus",
+            "臨時収入" : "Extraordinary Income",
+            "事業所得" : "Business Income",
+            "その他" : "Others",
+            "仕送り" : "Remittance"
+        }
+        self.PayDict = {
+            "食費" : "Food",
+            "日用雑貨" : "Daily Goods",
+            "交通" : "Transportation", 
+            "交際費" : "Relationship",
+            "エンタメ" : "Entertainment",
+            "教育・教養" : "Education",
+            "美容・衣服" : "Beayty, Clothes",
+            "医療・保険" : "Medical",
+            "通信" : "Communication",
+            "水道・光熱" : "Utility",
+            "住まい" : "House",
+            "クルマ" : "Car",
+            "税金" : "Tax",
+            "大型出費" : "Large Spending",
+            "その他" : "Others"
+        }
+
+        # setting matplotlib
+        plt.rc('text', usetex=True)
+        plt.rc('font', family='serif')
 
         # output path
         self.dir_path = os.path.dirname(os.path.abspath(__file__))
@@ -48,10 +85,9 @@ class Graph():
         SumList = self.MakeList("category", name, month)
 
         # draw graph
-        plt.rc('text', usetex=True)
-        plt.rc('font', family='serif')
         width = 0.3
-        ax = plt.subplot()
+        fig = plt.figure()
+        ax = fig.add_subplot(1, 1, 1)
         ax.bar(SumList.index, SumList['amount'], width=0.3)
         xfmt = mdates.DateFormatter("%y/%m/%d")
         xloc = mdates.DayLocator()
@@ -65,6 +101,7 @@ class Graph():
         plt.tight_layout()
         plt.show()
         plt.savefig(output_name)
+        plt.close(fig)
 
     def RelativePayment(self):
         # output path
@@ -104,9 +141,8 @@ class Graph():
         # draw graph
         ran = np.arange(len(monthList))
         width = 0.3
-        plt.rc('text', usetex=True)
-        plt.rc('font', family='serif')
-        ax = plt.subplot()
+        fig = plt.figure()
+        ax = fig.add_subplot(1, 1, 1)
         ax.bar(ran, RelaPaymentList, width=width,
                color="blue", label="Relative Payment")
         ax.bar(ran + width, RelaIncomeList, width=width,
@@ -117,3 +153,77 @@ class Graph():
         plt.xticks(ran + width / 2, monthList)
         plt.tight_layout()
         plt.savefig(output_name)
+        plt.close(fig)
+
+    def MonthlyCategoryGraph(self):
+        # output path
+        output_name = os.path.join(
+            self.output_path, "MonthlyCategoryGraph" + ".pdf")
+
+        # set monthList
+        monthList = []
+        y = 2017
+        for m in range(9, 13):
+            monthList.append(str(str(y) + "-" + str(m).zfill(2)))
+        y = 2018
+        for m in range(1, int(datetime.now().strftime("%m")) + 1):
+            monthList.append(str(str(y) + "-" + str(m).zfill(2)))
+
+        # arrange data
+        IncomeList = None
+        PaymentList = None
+        for month in monthList:
+            # calc Income
+            IncomeMonth = []
+            for InCate in self.IncomeCategories:
+                IncomeMonth.append(self.MakeList("category", InCate, month)[
+                                   "amount"].sum(axis=0))
+            if IncomeList is None:
+                IncomeList = pd.DataFrame(list([IncomeMonth]))
+            else:
+                IncomeList = IncomeList.append(list([IncomeMonth]))
+
+            # calc Payment
+            PaymentMonth = []
+            for PayCate in self.PaymentCategories:
+                PaymentMonth.append(self.MakeList(
+                    "category", PayCate, month)["amount"].sum(axis=0))
+            if PaymentList is None:
+                PaymentList = pd.DataFrame(list([PaymentMonth]))
+            else:
+                PaymentList = PaymentList.append(list([PaymentMonth]))
+
+        IncomeList.columns = self.IncomeCategories
+        PaymentList.columns = self.PaymentCategories
+
+        # draw graph
+        ran = np.arange(len(monthList))
+        width = 0.3
+        fig = plt.figure()
+        ax = fig.add_subplot(1, 1, 1)
+
+        # draw Income graph
+        before = np.zeros(len(monthList))
+        for InCate in self.IncomeCategories:
+            ax.bar(ran + width, IncomeList[InCate], width=width, label=self.IncDict[InCate], bottom=before)
+            if before.sum() == 0:
+                before = IncomeList[InCate]
+            else:
+                before = before.add(IncomeList[InCate])
+
+        # draw Payment graph
+        before = np.zeros(len(monthList))
+        for PayCate in self.PaymentCategories:
+            ax.bar(ran, PaymentList[PayCate], width=width, label=self.PayDict[PayCate], bottom=before)
+            if before.sum() == 0:
+                before = PaymentList[PayCate]
+            else:
+                before = before.add(PaymentList[PayCate])
+
+        plt.xlabel(r"month", fontsize=16)
+        plt.ylabel(r"money [yen]", fontsize=16)
+        plt.legend(bbox_to_anchor=(1.05, 1), loc="upper left")
+        plt.xticks(ran + width / 2, monthList)
+        plt.tight_layout()
+        plt.savefig(output_name)
+        plt.close(fig)

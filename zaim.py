@@ -60,7 +60,7 @@ def main():
         columns={"category_id": "category"})
 
     # constructor
-    graph = Graph(Mdata)
+    graph = Graph(Mdata, Cdata)
 
     # draw category graph
     if not args.graph == 0:
@@ -77,6 +77,9 @@ def main():
 
     # draw relative payment graph
     graph.RelativePayment()
+
+    # draw monthly category graph
+    graph.MonthlyCategoryGraph()
 
     # check option
     # search for keyword in place
