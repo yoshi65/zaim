@@ -60,12 +60,13 @@ class Graph():
         self.dir_path = os.path.dirname(os.path.abspath(__file__))
         self.output_path = os.path.join(self.dir_path, "data")
 
-    def MakeList(self, DataType, Keyword, Month):
+    def MakeList(self, Mode, Category, Month):
         NumofDays = calendar.monthrange(
             int(re.sub(r"-.*$", "", Month)), int(re.sub(r"^.*-", "", Month)))[1]
-        DataList = self.Data[self.Data[DataType]
-                             == Keyword].resample('D').sum()
-        DataList = DataList[Month + '-01':Month + '-' + str(NumofDays)]
+        DataList = self.Data[self.Data["mode"] == Mode]
+        if not Category is None:
+            DataList = DataList[DataList["category"] == Category]
+        DataList = DataList.resample('D').sum()[Month + '-01':Month + '-' + str(NumofDays)]
         DataList = DataList.fillna(0)
         return DataList
 
@@ -115,13 +116,13 @@ class Graph():
         RelaIncomeList = []
         for month in monthList:
             # AdRepayment calc
-            SumList = self.MakeList("category", AdRepayment, month)
+            SumList = self.MakeList("income", AdRepayment, month)
 
             # Payment calc
-            PayList = self.MakeList("mode", "payment", month)
+            PayList = self.MakeList("payment", None, month)
 
             # Income calc
-            IncomeList = self.MakeList("mode", "income", month)
+            IncomeList = self.MakeList("income", None, month)
 
             RelaPayment = PayList["amount"].sum(
                 axis=0) - SumList["amount"].sum(axis=0)
@@ -171,7 +172,7 @@ class Graph():
             for InCateList in self.IncDict.values():
                 Amount = 0
                 for InCate in InCateList:
-                    Amount += self.MakeList("category", InCate, month)["amount"].sum(axis=0)
+                    Amount += self.MakeList("income", InCate, month)["amount"].sum(axis=0)
                 IncomeMonth.append(Amount)
             if IncomeList is None:
                 IncomeList = pd.DataFrame(list([IncomeMonth]))
@@ -183,7 +184,7 @@ class Graph():
             for PayCateList in self.PayDict.values():
                 Amount = 0
                 for PayCate in PayCateList:
-                    Amount += self.MakeList("category", PayCate, month)["amount"].sum(axis=0)
+                    Amount += self.MakeList("payment", PayCate, month)["amount"].sum(axis=0)
                 PaymentMonth.append(Amount)
             if PaymentList is None:
                 PaymentList = pd.DataFrame(list([PaymentMonth]))
