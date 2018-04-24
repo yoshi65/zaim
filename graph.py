@@ -33,23 +33,23 @@ class Graph():
 
         # trans category
         self.IncDict = {
-            "Income" : ["給与所得"],
-            "Relative Income" : ["立替金返済"],
-            "Remittance" : ["仕送り"],
-            "Extraordinary Income" : ["臨時収入"],
-            "Others" : ["賞与", "事業所得", "その他"]
+            "Income": ["給与所得"],
+            "Relative Income": ["立替金返済"],
+            "Remittance": ["仕送り"],
+            "Extraordinary Income": ["臨時収入"],
+            "Others": ["賞与", "事業所得", "その他"]
         }
         self.PayDict = {
-            "Food" : ["食費"],
-            "Daily Goods" : ["日用雑貨"],
-            "Transportation" : ["交通"],
-            "Relationship" : ["交際費"],
-            "Entertainment" : ["エンタメ"],
-            "Education" : ["教育・教養"],
-            "Beauty, Clothes" : ["美容・衣服"],
-            "Large Spending" : ["大型出費"],
-            "Utility" : ["医療・保険", "クルマ", "水道・光熱", "通信", "住まい"],
-            "Others" : ["税金", "その他"]
+            "Food": ["食費"],
+            "Daily Goods": ["日用雑貨"],
+            "Transportation": ["交通"],
+            "Relationship": ["交際費"],
+            "Entertainment": ["エンタメ"],
+            "Education": ["教育・教養"],
+            "Beauty, Clothes": ["美容・衣服"],
+            "Large Spending": ["大型出費"],
+            "Utility": ["医療・保険", "クルマ", "水道・光熱", "通信", "住まい"],
+            "Others": ["税金", "その他"]
         }
 
         # setting matplotlib
@@ -60,13 +60,20 @@ class Graph():
         self.dir_path = os.path.dirname(os.path.abspath(__file__))
         self.output_path = os.path.join(self.dir_path, "data")
 
+        # set output directory
+        try:
+            os.mkdir(self.output_path)
+        except FileExistsError:
+            pass
+
     def MakeList(self, Mode, Category, Month):
         NumofDays = calendar.monthrange(
             int(re.sub(r"-.*$", "", Month)), int(re.sub(r"^.*-", "", Month)))[1]
         DataList = self.Data[self.Data["mode"] == Mode]
         if not Category is None:
             DataList = DataList[DataList["category"] == Category]
-        DataList = DataList.resample('D').sum()[Month + '-01':Month + '-' + str(NumofDays)]
+        DataList = DataList.resample(
+            'D').sum()[Month + '-01':Month + '-' + str(NumofDays)]
         DataList = DataList.fillna(0)
         return DataList
 
@@ -172,7 +179,8 @@ class Graph():
             for InCateList in self.IncDict.values():
                 Amount = 0
                 for InCate in InCateList:
-                    Amount += self.MakeList("income", InCate, month)["amount"].sum(axis=0)
+                    Amount += self.MakeList("income",
+                                            InCate, month)["amount"].sum(axis=0)
                 IncomeMonth.append(Amount)
             if IncomeList is None:
                 IncomeList = pd.DataFrame(list([IncomeMonth]))
@@ -184,7 +192,8 @@ class Graph():
             for PayCateList in self.PayDict.values():
                 Amount = 0
                 for PayCate in PayCateList:
-                    Amount += self.MakeList("payment", PayCate, month)["amount"].sum(axis=0)
+                    Amount += self.MakeList("payment",
+                                            PayCate, month)["amount"].sum(axis=0)
                 PaymentMonth.append(Amount)
             if PaymentList is None:
                 PaymentList = pd.DataFrame(list([PaymentMonth]))
@@ -204,7 +213,8 @@ class Graph():
         before = np.zeros(len(monthList))
         IncLabel = []
         for InKey in self.IncDict.keys():
-            IncLabel.append(ax.bar(ran, IncomeList[InKey], width=width, label=InKey, bottom=before))
+            IncLabel.append(
+                ax.bar(ran, IncomeList[InKey], width=width, label=InKey, bottom=before))
             if before.sum() == 0:
                 before = IncomeList[InKey]
             else:
@@ -214,7 +224,8 @@ class Graph():
         before = np.zeros(len(monthList))
         PayLabel = []
         for PayKey in self.PayDict.keys():
-            PayLabel.append(ax.bar(ran + width, PaymentList[PayKey], width=width, label=PayKey, bottom=before))
+            PayLabel.append(ax.bar(
+                ran + width, PaymentList[PayKey], width=width, label=PayKey, bottom=before))
             if before.sum() == 0:
                 before = PaymentList[PayKey]
             else:
@@ -223,9 +234,11 @@ class Graph():
         plt.title(r"Monthly Category Graph(income and payment)")
         plt.xlabel(r"month", fontsize=16)
         plt.ylabel(r"money [yen]", fontsize=16)
-        leg1 = plt.legend(handles=IncLabel, bbox_to_anchor=(1.05, 1), loc="upper left", title="income category")
+        leg1 = plt.legend(handles=IncLabel, bbox_to_anchor=(
+            1.05, 1), loc="upper left", title="income category")
         ax = plt.gca().add_artist(leg1)
-        leg2 = plt.legend(handles=PayLabel, bbox_to_anchor=(1.05, 0), loc="lower left", title="payment category")
+        leg2 = plt.legend(handles=PayLabel, bbox_to_anchor=(
+            1.05, 0), loc="lower left", title="payment category")
         plt.xticks(ran + width / 2, monthList)
         plt.tight_layout()
         plt.savefig(output_name)
