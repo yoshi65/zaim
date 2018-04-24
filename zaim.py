@@ -14,12 +14,10 @@ import pandas as pd
 import requests
 from requests_oauthlib import OAuth1
 import argparse
-import pandas.plotting._converter as pandacnv
 from IPython.display import display
 
 # myfunc
 from graph import Graph
-pandacnv.register()
 
 # authorize
 key_data = pd.read_csv("./key.csv")
@@ -89,6 +87,7 @@ def main():
     # set movement of money
     Mdata = Mdata[Mdata["mode"].str.contains(
         args.mode)].reset_index(drop=True)
+    Mdata = Mdata.replace('\ 00:00:00$', '')
 
     # output
     display(Mdata.loc[:(args.num - 1), :])
