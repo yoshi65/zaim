@@ -1,8 +1,15 @@
 # zaim
 Visualize household accounts in [zaim](https://zaim.net/) as graphs and lists.
 
+## Preparation
+After authentication with OAuth with reference to [How to authorize](https://dev.zaim.net/home/api/authorize), please make `key.csv`.
+```csv:key.csv
+consumer_key,consumer_secret,access_token,access_secret
+hoge,hoge,hoge,hoge
+```
+
 ## Usage
-```sh
+```sh:zaim.py
 usage: zaim.py [-h] [-p] [-m {payment,income,transfer}] [-n NUM] [-g YYYY-MM]
 
 Visualize household accounts in zaim.net as graphs and lists.
