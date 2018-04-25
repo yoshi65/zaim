@@ -77,13 +77,13 @@ class Graph():
         DataList = DataList.fillna(0)
         return DataList
 
-    def DrawGraph(self, month, name):
+    def DrawGraph(self, month, Keyword):
         # output path
         output_name = os.path.join(
-            self.output_path, name + "_" + month + ".pdf")
+            self.output_path, Keyword + "_" + month + ".pdf")
 
         # arrange data
-        SumList = self.MakeList("category", name, month)
+        SumList = self.MakeList("category", Keyword, month)
 
         # draw graph
         width = 0.3

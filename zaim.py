@@ -60,6 +60,13 @@ def main():
     # constructor
     graph = Graph(Mdata, Cdata)
 
+    # draw relative payment graph
+    graph.RelativePayment()
+
+    # draw monthly category graph
+    graph.MonthlyCategoryGraph()
+
+    # check option
     # draw category graph
     if not args.graph == 0:
         # write category list
@@ -73,17 +80,11 @@ def main():
         graph.DrawGraph(args.graph, keyword)
         sys.exit(1)
 
-    # draw relative payment graph
-    graph.RelativePayment()
-
-    # draw monthly category graph
-    graph.MonthlyCategoryGraph()
-
-    # check option
     # search for keyword in place
     if args.place:
         keyword = input("What is location KEYWORD?\n")
         Mdata = Mdata[Mdata["place"].str.contains(keyword)]
+
     # set movement of money
     Mdata = Mdata[Mdata["mode"].str.contains(
         args.mode)].reset_index(drop=True)
