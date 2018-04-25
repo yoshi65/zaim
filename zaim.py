@@ -30,15 +30,15 @@ auth = OAuth1(consumer_key, consumer_secret, access_token, access_secret)
 
 def main():
     # set option
-    paresr = argparse.ArgumentParser(description="analyze zaim from CUI")
+    paresr = argparse.ArgumentParser(description="Visualize household accounts in zaim.net as graphs and lists.")
     paresr.add_argument('-p', '--place', action='store_true',
                         help='search for KEYWORD in place', default=False)
     paresr.add_argument('-m', '--mode', action='store', choices=[
                         'payment', 'income', 'transfer'], help='choice kind of movement of money', default='payment')
     paresr.add_argument('-n', '--num', action='store',
-                        type=int, help='decide drawing number of movement', default=10)
-    paresr.add_argument('-g', '--graph', action='store',
-                        type=str, help='select category and draw graph in a month (ex. -g 2018-01)', default=0)
+                        type=int, help='decide the number of movement to display', default=10)
+    paresr.add_argument('-g', '--graph', metavar='YYYY-MM', action='store',
+                        type=str, help='select category and draw graph in a month', default=0)
     # graph option (type(int))
     args = paresr.parse_args()
 
