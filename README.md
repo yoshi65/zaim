@@ -28,7 +28,7 @@ optional arguments:
 RelativePayment and MonthlyCategoryGraph function in graph.py is Japanese and a personal specifiction.
 
 ## Example
-By default, the last 10 spending(amount, amount, date, mode, place, category) is displayed.
+By default, the last 10 payment(amount, amount, date, mode, place, category) is displayed.
 ```sh
 python3 zaim.py
 ```
