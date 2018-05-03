@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 #
 # FileName: 	graph
-# CreatedDate:  2018-04-13 14:12:23
+# CreatedDate:  2018-04-13 14:12:23 +0900
+# LastModified: 2018-05-03 15:53:01 +0900
 #
 
 
@@ -77,13 +78,13 @@ class Graph():
         DataList = DataList.fillna(0)
         return DataList
 
-    def DrawGraph(self, month, Keyword):
+    def DrawGraph(self, month, Mode, Keyword):
         # output path
         output_name = os.path.join(
             self.output_path, Keyword + "_" + month + ".pdf")
 
         # arrange data
-        SumList = self.MakeList("category", Keyword, month)
+        SumList = self.MakeList(Mode, Keyword, month)
 
         # draw graph
         width = 0.3

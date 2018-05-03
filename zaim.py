@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 #
 # FileName: 	zaim
-# CreatedDate:  2017-12-04 19:10:34
+# CreatedDate:  2017-12-04 19:10:34 +0900
+# LastModified: 2018-05-03 15:52:50 +0900
 #
 
 
@@ -77,7 +78,8 @@ def main():
         print(' '.join(list(Cdata[Cdata["mode"] == IncStr]["name"])))
         print()
         keyword = input("What is CATEGORY?\n")
-        graph.DrawGraph(args.graph, keyword)
+        Mode = Cdata[Cdata["name"] == keyword]["mode"].values[0]
+        graph.DrawGraph(args.graph, Mode, keyword)
         sys.exit(1)
 
     # search for keyword in place
