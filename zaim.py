@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 #
 # FileName: 	zaim
-# CreatedDate:  2017-12-04 19:10:34
+# CreatedDate:  2017-12-04 19:10:34 +0900
+# LastModified: 2018-05-09 14:48:21 +0900
 #
 
 
@@ -18,6 +19,7 @@ from IPython.display import display
 
 # myfunc
 from graph import Graph
+from post import Post
 
 # authorize
 key_data = pd.read_csv("./key.csv")
@@ -30,9 +32,12 @@ auth = OAuth1(consumer_key, consumer_secret, access_token, access_secret)
 
 def main():
     # set option
-    paresr = argparse.ArgumentParser(description="Visualize household accounts in zaim.net as graphs and lists.")
+    paresr = argparse.ArgumentParser(
+        description="Visualize household accounts in zaim.net as graphs and lists.")
     paresr.add_argument('-p', '--place', action='store_true',
                         help='search for KEYWORD in place', default=False)
+    paresr.add_argument('-i', '--input', action='store_true',
+                        help='Input data', default=False)
     paresr.add_argument('-m', '--mode', action='store', choices=[
                         'payment', 'income', 'transfer'], help='choice kind of movement of money', default='payment')
     paresr.add_argument('-n', '--num', action='store',
@@ -43,11 +48,14 @@ def main():
     args = paresr.parse_args()
 
     # variable
-    Mdata = money()
+    Mdata = GetData("money", "money")
     tmp = Mdata['category_id']
-    Mdata = money().loc[:, ['amount', 'date', 'mode', 'place']]
-    Cdata = category()
-    Vdata = verify()
+    Mdata = GetData("money", "money").loc[:, [
+        'amount', 'date', 'mode', 'place']]
+    Cdata = GetData("category", "categories")
+    Gdata = GetData("genre", "genres")
+    # Vdata = verify()
+    Adata = GetData("account", "accounts")
     PayStr = "payment"
     IncStr = "income"
 
@@ -56,6 +64,13 @@ def main():
         tmp = tmp.replace(Cdata.loc[i, "id"], Cdata.loc[i, "name"])
     Mdata = pd.concat([Mdata, tmp], axis=1).rename(
         columns={"category_id": "category"})
+
+    # input data
+    if args.input:
+        post = Post(Cdata, Gdata, Adata)
+        post.MakeInputData()
+        post.PostData(auth)
+        sys.exit(1)
 
     # constructor
     graph = Graph(Mdata, Cdata)
@@ -94,31 +109,22 @@ def main():
     display(Mdata.loc[:(args.num - 1), :])
 
 
-def verify():
-    endpoint = "https://api.zaim.net/v2/home/user/verify"
+# def verify():
+#     endpoint = "https://api.zaim.net/v2/home/user/verify"
+#
+#     r = requests.get(endpoint, auth=auth)
+#     Vdata = pd.read_json(json.dumps(r.json()))
+#
+#     return Vdata
+
+
+def GetData(Name, Group):
+    endpoint = "https://api.zaim.net/v2/home/" + Name
 
     r = requests.get(endpoint, auth=auth)
-    Vdata = pd.read_json(json.dumps(r.json()))
+    data = pd.read_json(json.dumps(r.json()[Group]))
 
-    return Vdata
-
-
-def category():
-    endpoint = "https://api.zaim.net/v2/home/category"
-
-    r = requests.get(endpoint, auth=auth)
-    Cdata = pd.read_json(json.dumps(r.json()["categories"]))
-
-    return Cdata
-
-
-def money():
-    endpoint = "https://api.zaim.net/v2/home/money"
-
-    r = requests.get(endpoint, auth=auth)
-    Mdata = pd.read_json(json.dumps(r.json()["money"]))
-
-    return Mdata
+    return data
 
 
 if __name__ == "__main__":
