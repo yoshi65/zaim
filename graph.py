@@ -3,7 +3,7 @@
 #
 # FileName: 	graph
 # CreatedDate:  2018-04-13 14:12:23 +0900
-# LastModified: 2018-05-10 17:55:41 +0900
+# LastModified: 2018-05-10 18:14:07 +0900
 #
 
 
@@ -27,6 +27,15 @@ class Graph():
         self.Data['date'] = self.Data['date'].astype(datetime)
         self.Data = self.Data.set_index('date')
         self.Categories = Categories
+
+        # set monthList
+        self.monthList = []
+        y = 2017
+        for m in range(9, 13):
+            self.monthList.append(str(str(y) + "-" + str(m).zfill(2)))
+        y = 2018
+        for m in range(1, int(datetime.now().strftime("%m")) + 1):
+            self.monthList.append(str(str(y) + "-" + str(m).zfill(2)))
 
         # trans category
         self.IncDict = {
@@ -74,7 +83,7 @@ class Graph():
         DataList = DataList.fillna(0)
         return DataList
 
-    def MakeModeList(self, monthList, Mode):
+    def MakeModeList(self, Mode):
         # check mode
         if Mode == "income":
             ModeDict = self.IncDict
@@ -87,7 +96,7 @@ class Graph():
         ModeList = None
 
         # calc
-        for month in monthList:
+        for month in self.monthList:
             ModeMonth = []
             for ModeCateList in ModeDict.values():
                 Amount = 0
@@ -136,25 +145,17 @@ class Graph():
         plt.close(fig)
 
     def RelativePayment(self):
-        # output path
+        # variable
         output_name = os.path.join(
-            self.output_path, "RelativePayment" + ".pdf")
-        AdRepayment = "立替金返済"
+            self.output_path, "RelativePayment.pdf")
+        AdRepaymentId = 12 # Category Id of "立替金返済" 
 
         # arrange data
-        monthList = []
-        y = 2017
-        for m in range(9, 13):
-            monthList.append(str(str(y) + "-" + str(m).zfill(2)))
-        y = 2018
-        for m in range(1, int(datetime.now().strftime("%m")) + 1):
-            monthList.append(str(str(y) + "-" + str(m).zfill(2)))
         RelaPaymentList = []
-        # paymentList = []
         RelaIncomeList = []
-        for month in monthList:
+        for month in self.monthList:
             # AdRepayment calc
-            SumList = self.MakeList("income", AdRepayment, month)
+            SumList = self.MakeList("income", AdRepaymentId, month)
 
             # Payment calc
             PayList = self.MakeList("payment", None, month)
@@ -171,7 +172,7 @@ class Graph():
             RelaIncomeList.append(RelaIncome)
 
         # draw graph
-        ran = np.arange(len(monthList))
+        ran = np.arange(len(self.monthList))
         width = 0.3
         fig = plt.figure()
         ax = fig.add_subplot(1, 1, 1)
@@ -182,7 +183,7 @@ class Graph():
         plt.xlabel(r"month", fontsize=16)
         plt.ylabel(r"money [yen]", fontsize=16)
         plt.legend(loc="best")
-        plt.xticks(ran + width / 2, monthList)
+        plt.xticks(ran + width / 2, self.monthList)
         plt.tight_layout()
         plt.savefig(output_name)
         plt.close(fig)
@@ -192,27 +193,18 @@ class Graph():
         output_name = os.path.join(
             self.output_path, "MonthlyCategoryGraph" + ".pdf")
 
-        # set monthList
-        monthList = []
-        y = 2017
-        for m in range(9, 13):
-            monthList.append(str(str(y) + "-" + str(m).zfill(2)))
-        y = 2018
-        for m in range(1, int(datetime.now().strftime("%m")) + 1):
-            monthList.append(str(str(y) + "-" + str(m).zfill(2)))
-
         # arrange data
-        IncomeList = self.MakeModeList(monthList, "income")
-        PaymentList = self.MakeModeList(monthList, "payment")
+        IncomeList = self.MakeModeList("income")
+        PaymentList = self.MakeModeList("payment")
 
         # draw graph
-        ran = np.arange(len(monthList))
+        ran = np.arange(len(self.monthList))
         width = 0.3
         fig = plt.figure(figsize=(8, 5))
         ax = fig.add_subplot(1, 1, 1)
 
         # draw Income graph
-        before = np.zeros(len(monthList))
+        before = np.zeros(len(self.monthList))
         IncLabel = []
         for InKey in self.IncDict.keys():
             IncLabel.append(
@@ -223,7 +215,7 @@ class Graph():
                 before = before.add(IncomeList[InKey])
 
         # draw Payment graph
-        before = np.zeros(len(monthList))
+        before = np.zeros(len(self.monthList))
         PayLabel = []
         for PayKey in self.PayDict.keys():
             PayLabel.append(ax.bar(
@@ -241,7 +233,7 @@ class Graph():
         ax = plt.gca().add_artist(leg1)
         leg2 = plt.legend(handles=PayLabel, bbox_to_anchor=(
             1.05, 0), loc="lower left", title="payment category")
-        plt.xticks(ran + width / 2, monthList)
+        plt.xticks(ran + width / 2, self.monthList)
         plt.tight_layout()
         plt.savefig(output_name)
         plt.close(fig)

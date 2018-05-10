@@ -3,7 +3,7 @@
 #
 # FileName: 	zaim
 # CreatedDate:  2017-12-04 19:10:34 +0900
-# LastModified: 2018-05-10 17:48:43 +0900
+# LastModified: 2018-05-10 18:10:18 +0900
 #
 
 
@@ -68,7 +68,7 @@ def main():
     graph = Graph(Mdata, Cdata)
 
     # # draw relative payment graph
-    # graph.RelativePayment()
+    graph.RelativePayment()
 
     # # draw monthly category graph
     # graph.MonthlyCategoryGraph()
