@@ -3,7 +3,7 @@
 #
 # FileName: 	graph
 # CreatedDate:  2018-04-13 14:12:23 +0900
-# LastModified: 2018-05-03 15:53:01 +0900
+# LastModified: 2018-05-10 10:27:26 +0900
 #
 
 
@@ -101,8 +101,8 @@ class Graph():
         plt.xlabel(r"date", fontsize=16)
         plt.ylabel(r"money [yen]", fontsize=16)
         plt.tight_layout()
-        plt.show()
         plt.savefig(output_name)
+        plt.show()
         plt.close(fig)
 
     def RelativePayment(self):
