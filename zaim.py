@@ -3,7 +3,7 @@
 #
 # FileName: 	zaim
 # CreatedDate:  2017-12-04 19:10:34 +0900
-# LastModified: 2018-05-10 18:10:18 +0900
+# LastModified: 2018-05-10 18:27:22 +0900
 #
 
 
@@ -64,14 +64,14 @@ def main():
         post.PostData(auth)
         sys.exit(1)
 
-    # # constructor
+    # constructor
     graph = Graph(Mdata, Cdata)
 
-    # # draw relative payment graph
+    # draw relative payment graph
     graph.RelativePayment()
 
-    # # draw monthly category graph
-    # graph.MonthlyCategoryGraph()
+    # draw monthly category graph
+    graph.MonthlyCategoryGraph()
 
     # check option
     # draw category graph

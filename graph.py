@@ -3,7 +3,7 @@
 #
 # FileName: 	graph
 # CreatedDate:  2018-04-13 14:12:23 +0900
-# LastModified: 2018-05-10 18:14:07 +0900
+# LastModified: 2018-05-10 18:26:58 +0900
 #
 
 
@@ -39,23 +39,23 @@ class Graph():
 
         # trans category
         self.IncDict = {
-            "Income": ["給与所得"],
-            "Relative Income": ["立替金返済"],
-            "Remittance": ["仕送り"],
-            "Extraordinary Income": ["臨時収入"],
-            "Others": ["賞与", "事業所得", "その他"]
+            "Income": [11],  # 給与所得
+            "Relative Income": [12],  # 立替金返済
+            "Remittance": [35925503],  # 仕送り
+            "Extraordinary Income": [14],  # 臨時収入
+            "Others": [13, 15, 19]  # 賞与, 事業所得, その他
         }
         self.PayDict = {
-            "Food": ["食費"],
-            "Daily Goods": ["日用雑貨"],
-            "Transportation": ["交通"],
-            "Relationship": ["交際費"],
-            "Entertainment": ["エンタメ"],
-            "Education": ["教育・教養"],
-            "Beauty, Clothes": ["美容・衣服"],
-            "Large Spending": ["大型出費"],
-            "Utility": ["医療・保険", "クルマ", "水道・光熱", "通信", "住まい"],
-            "Others": ["税金", "その他"]
+            "Food": [101],  # 食費
+            "Daily Goods": [102],  # 日用雑貨
+            "Transportation": [103],  # 交通
+            "Relationship": [107],  # 交際費
+            "Entertainment": [108],  # エンタメ
+            "Education": [109],  # 教育・教養
+            "Beauty, Clothes": [111],  # 美容・衣服
+            "Large Spending": [114],  # 大型出費
+            "Utility": [104, 105, 106, 110, 112],  # 医療・保険, クルマ, 水道・光熱, 通信, 住まい
+            "Others": [113, 199]  # 税金, その他
         }
 
         # setting matplotlib
@@ -100,8 +100,9 @@ class Graph():
             ModeMonth = []
             for ModeCateList in ModeDict.values():
                 Amount = 0
-                for ModeCate in ModeCateList:
-                    Amount += self.MakeList(Mode, ModeCate, month)["amount"].sum(axis=0)
+                for ModeCateId in ModeCateList:
+                    Amount += self.MakeList(Mode, ModeCateId,
+                                            month)["amount"].sum(axis=0)
                 ModeMonth.append(Amount)
             if ModeList is None:
                 ModeList = pd.DataFrame(list([ModeMonth]))
@@ -113,14 +114,16 @@ class Graph():
 
         return ModeList
 
-
     def DrawGraph(self, month, CategoryId):
         # variable
-        CategoryName = self.Categories[self.Categories["id"] == CategoryId]["name"].values[0]
-        Mode = self.Categories[self.Categories["id"] == CategoryId]["mode"].values[0]
+        CategoryName = self.Categories[self.Categories["id"]
+                                       == CategoryId]["name"].values[0]
+        Mode = self.Categories[self.Categories["id"]
+                               == CategoryId]["mode"].values[0]
 
         # output path
-        output_name = os.path.join(self.output_path, "{0}_{1}.pdf".format(CategoryName, month))
+        output_name = os.path.join(
+            self.output_path, "{0}_{1}.pdf".format(CategoryName, month))
 
         # arrange data
         SumList = self.MakeList(Mode, CategoryId, month)
@@ -148,7 +151,7 @@ class Graph():
         # variable
         output_name = os.path.join(
             self.output_path, "RelativePayment.pdf")
-        AdRepaymentId = 12 # Category Id of "立替金返済" 
+        AdRepaymentId = 12  # Category Id of "立替金返済"
 
         # arrange data
         RelaPaymentList = []
