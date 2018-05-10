@@ -3,7 +3,7 @@
 #
 # FileName: 	graph
 # CreatedDate:  2018-04-13 14:12:23 +0900
-# LastModified: 2018-05-10 10:27:26 +0900
+# LastModified: 2018-05-10 12:34:36 +0900
 #
 
 
@@ -77,6 +77,37 @@ class Graph():
             'D').sum()[Month + '-01':Month + '-' + str(NumofDays)]
         DataList = DataList.fillna(0)
         return DataList
+
+    def MakeModeList(self, monthList, Mode):
+        # check mode
+        if Mode == "income":
+            ModeDict = self.IncDict
+        elif Mode == "payment":
+            ModeDict = self.PayDict
+        else:
+            print("ERROR: Mode don't exist")
+
+        # variable
+        ModeList = None
+
+        # calc
+        for month in monthList:
+            ModeMonth = []
+            for ModeCateList in ModeDict.values():
+                Amount = 0
+                for ModeCate in ModeCateList:
+                    Amount += self.MakeList(Mode, ModeCate, month)["amount"].sum(axis=0)
+                ModeMonth.append(Amount)
+            if ModeList is None:
+                ModeList = pd.DataFrame(list([ModeMonth]))
+            else:
+                ModeList = ModeList.append(list([ModeMonth]))
+
+        # reset columns
+        ModeList.columns = ModeDict.keys()
+
+        return ModeList
+
 
     def DrawGraph(self, month, Mode, Keyword):
         # output path
@@ -172,37 +203,8 @@ class Graph():
             monthList.append(str(str(y) + "-" + str(m).zfill(2)))
 
         # arrange data
-        IncomeList = None
-        PaymentList = None
-        for month in monthList:
-            # calc Income
-            IncomeMonth = []
-            for InCateList in self.IncDict.values():
-                Amount = 0
-                for InCate in InCateList:
-                    Amount += self.MakeList("income",
-                                            InCate, month)["amount"].sum(axis=0)
-                IncomeMonth.append(Amount)
-            if IncomeList is None:
-                IncomeList = pd.DataFrame(list([IncomeMonth]))
-            else:
-                IncomeList = IncomeList.append(list([IncomeMonth]))
-
-            # calc Payment
-            PaymentMonth = []
-            for PayCateList in self.PayDict.values():
-                Amount = 0
-                for PayCate in PayCateList:
-                    Amount += self.MakeList("payment",
-                                            PayCate, month)["amount"].sum(axis=0)
-                PaymentMonth.append(Amount)
-            if PaymentList is None:
-                PaymentList = pd.DataFrame(list([PaymentMonth]))
-            else:
-                PaymentList = PaymentList.append(list([PaymentMonth]))
-
-        IncomeList.columns = self.IncDict.keys()
-        PaymentList.columns = self.PayDict.keys()
+        IncomeList = self.MakeModeList(monthList, "income")
+        PaymentList = self.MakeModeList(monthList, "payment")
 
         # draw graph
         ran = np.arange(len(monthList))
