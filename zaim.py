@@ -3,7 +3,7 @@
 #
 # FileName: 	zaim
 # CreatedDate:  2017-12-04 19:10:34 +0900
-# LastModified: 2018-05-09 15:33:23 +0900
+# LastModified: 2018-05-10 17:35:58 +0900
 #
 
 
@@ -48,22 +48,14 @@ def main():
     args = paresr.parse_args()
 
     # variable
-    Mdata = GetData("money", "money")
-    tmp = Mdata['category_id']
     Mdata = GetData("money", "money").loc[:, [
-        'amount', 'date', 'mode', 'place']]
+        'amount', 'date', 'mode', 'place', 'category_id', 'genre_id']]
     Cdata = GetData("category", "categories")
     Gdata = GetData("genre", "genres")
     # Vdata = verify()
     Adata = GetData("account", "accounts")
     PayStr = "payment"
     IncStr = "income"
-
-    # replace category_id with category_name
-    for i in range(0, len(Cdata.index)):
-        tmp = tmp.replace(Cdata.loc[i, "id"], Cdata.loc[i, "name"])
-    Mdata = pd.concat([Mdata, tmp], axis=1).rename(
-        columns={"category_id": "category"})
 
     # input data
     if args.input:
@@ -72,14 +64,14 @@ def main():
         post.PostData(auth)
         sys.exit(1)
 
-    # constructor
-    graph = Graph(Mdata, Cdata)
+    # # constructor
+    # graph = Graph(Mdata, Cdata)
 
-    # draw relative payment graph
-    graph.RelativePayment()
+    # # draw relative payment graph
+    # graph.RelativePayment()
 
-    # draw monthly category graph
-    graph.MonthlyCategoryGraph()
+    # # draw monthly category graph
+    # graph.MonthlyCategoryGraph()
 
     # check option
     # draw category graph
@@ -105,6 +97,17 @@ def main():
     Mdata = Mdata[Mdata["mode"].str.contains(
         args.mode)].reset_index(drop=True)
     Mdata = Mdata.replace('\ 00:00:00$', '')
+
+    # replace category_id with category_name
+    Ctmp = Mdata['category_id']
+    Gtmp = Mdata['genre_id']
+    Mdata = Mdata.drop(['category_id', 'genre_id'], axis=1)
+    for i in range(0, len(Cdata.index)):
+        Ctmp = Ctmp.replace(Cdata.loc[i, "id"], Cdata.loc[i, "name"])
+    for i in range(0, len(Gdata.index)):
+        Gtmp = Gtmp.replace(Gdata.loc[i, "id"], Gdata.loc[i, "name"])
+    Mdata = pd.concat([Mdata, Ctmp, Gtmp], axis=1).rename(
+        columns={"category_id": "category", "genre_id": "genre"})
 
     # output
     display(Mdata.loc[:(args.num - 1), :])
