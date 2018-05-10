@@ -1,5 +1,6 @@
 # zaim
 Visualize household accounts in [zaim](https://zaim.net/) as graphs and lists.
+And, add household account book on the command line.
 
 ## Preparation
 After authentication with OAuth with reference to [How to authorize](https://dev.zaim.net/home/api/authorize), please make `key.csv`.
@@ -10,13 +11,15 @@ hoge,hoge,hoge,hoge
 
 ## Usage
 ```sh:zaim.py
-usage: zaim.py [-h] [-p] [-m {payment,income,transfer}] [-n NUM] [-g YYYY-MM]
+usage: zaim.py [-h] [-p] [-i] [-m {payment,income,transfer}] [-n NUM]
+               [-g YYYY-MM]
 
 Visualize household accounts in zaim.net as graphs and lists.
 
 optional arguments:
   -h, --help            show this help message and exit
   -p, --place           search for KEYWORD in place
+  -i, --input           Input data
   -m {payment,income,transfer}, --mode {payment,income,transfer}
                         choice kind of movement of money
   -n NUM, --num NUM     decide the number of movement to display
@@ -30,11 +33,43 @@ RelativePayment and MonthlyCategoryGraph function in graph.py is Japanese and a 
 ## Example
 By default, the last 10 payment(amount, amount, date, mode, place, category) is displayed.
 ```sh
-python3 zaim.py
+% python3 zaim.py
 ```
 
-You want to see daily expenditure in April 2018.
+If you want to see daily expenditure in April 2018.
 ```sh
-python3 zaim.py -g 2018-04
+% python3 zaim.py -g 2018-04
 ```
 After you choice category or genre, draw graph and output in `./data`.
+
+If you want to add household account book.
+```sh
+% python3 zaim.py -i
+How much?
+1000
+
+When?
+Format:YYYY-MM-DD
+2018-05-10
+
+Which is Mode?
+payment or income or transfer
+payment
+
+Account LIST
+hoge geho foo bar
+What is from Account?
+hoge
+
+payment category LIST
+hoge geho foo bar
+What is Category?
+bar
+
+bar genre LIST
+hoge geho foo bar
+What is Genre?
+foo
+
+success!
+```

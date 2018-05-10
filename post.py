@@ -3,7 +3,7 @@
 #
 # FileName: 	post
 # CreatedDate:  2018-05-09 11:23:37 +0900
-# LastModified: 2018-05-09 16:23:31 +0900
+# LastModified: 2018-05-10 10:45:31 +0900
 #
 
 
@@ -84,7 +84,7 @@ class Post():
 
         elif self.Mode == 'income' or self.Mode == 'payment':
             # category
-            print("{0} LIST".format(self.Mode))
+            print("{0} category LIST".format(self.Mode))
             print(
                 ' '.join(list(self.Categories[self.Categories["mode"] == self.Mode]["name"])))
             Category = input("What is Category?\n")
@@ -96,7 +96,7 @@ class Post():
             print()
 
             # genre
-            print("{0} LIST".format(Category))
+            print("{0} genre LIST".format(Category))
             print(' '.join(list(
                 self.Genres[self.Genres["category_id"] == self.Data['category_id']]['name'])))
             Genre = input("What is Genre?\n")
