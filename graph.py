@@ -3,7 +3,7 @@
 #
 # FileName: 	graph
 # CreatedDate:  2018-04-13 14:12:23 +0900
-# LastModified: 2018-05-10 12:34:36 +0900
+# LastModified: 2018-05-10 17:55:41 +0900
 #
 
 
@@ -27,10 +27,6 @@ class Graph():
         self.Data['date'] = self.Data['date'].astype(datetime)
         self.Data = self.Data.set_index('date')
         self.Categories = Categories
-        self.PaymentCategories = list(
-            self.Categories[self.Categories["mode"] == "payment"]["name"])
-        self.IncomeCategories = list(
-            self.Categories[self.Categories["mode"] == "income"]["name"])
 
         # trans category
         self.IncDict = {
@@ -67,12 +63,12 @@ class Graph():
         except FileExistsError:
             pass
 
-    def MakeList(self, Mode, Category, Month):
+    def MakeList(self, Mode, CategoryId, Month):
         NumofDays = calendar.monthrange(
             int(re.sub(r"-.*$", "", Month)), int(re.sub(r"^.*-", "", Month)))[1]
         DataList = self.Data[self.Data["mode"] == Mode]
-        if not Category is None:
-            DataList = DataList[DataList["category"] == Category]
+        if not CategoryId is None:
+            DataList = DataList[DataList["category_id"] == CategoryId]
         DataList = DataList.resample(
             'D').sum()[Month + '-01':Month + '-' + str(NumofDays)]
         DataList = DataList.fillna(0)
@@ -109,13 +105,16 @@ class Graph():
         return ModeList
 
 
-    def DrawGraph(self, month, Mode, Keyword):
+    def DrawGraph(self, month, CategoryId):
+        # variable
+        CategoryName = self.Categories[self.Categories["id"] == CategoryId]["name"].values[0]
+        Mode = self.Categories[self.Categories["id"] == CategoryId]["mode"].values[0]
+
         # output path
-        output_name = os.path.join(
-            self.output_path, Keyword + "_" + month + ".pdf")
+        output_name = os.path.join(self.output_path, "{0}_{1}.pdf".format(CategoryName, month))
 
         # arrange data
-        SumList = self.MakeList(Mode, Keyword, month)
+        SumList = self.MakeList(Mode, CategoryId, month)
 
         # draw graph
         width = 0.3
@@ -128,7 +127,7 @@ class Graph():
         ax.xaxis.set_major_formatter(xfmt)
         ax.xaxis.set_tick_params(rotation=45)
         ax.xaxis.set_major_locator(ticker.MultipleLocator(7))
-        ax.grid(True)
+        # ax.grid(True)
         plt.xlabel(r"date", fontsize=16)
         plt.ylabel(r"money [yen]", fontsize=16)
         plt.tight_layout()

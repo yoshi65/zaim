@@ -3,7 +3,7 @@
 #
 # FileName: 	zaim
 # CreatedDate:  2017-12-04 19:10:34 +0900
-# LastModified: 2018-05-10 17:35:58 +0900
+# LastModified: 2018-05-10 17:48:43 +0900
 #
 
 
@@ -65,7 +65,7 @@ def main():
         sys.exit(1)
 
     # # constructor
-    # graph = Graph(Mdata, Cdata)
+    graph = Graph(Mdata, Cdata)
 
     # # draw relative payment graph
     # graph.RelativePayment()
@@ -84,8 +84,16 @@ def main():
         print(' '.join(list(Cdata[Cdata["mode"] == IncStr]["name"])))
         print()
         keyword = input("What is CATEGORY?\n")
-        Mode = Cdata[Cdata["name"] == keyword]["mode"].values[0]
-        graph.DrawGraph(args.graph, Mode, keyword)
+
+        # check category exist
+        try:
+            CategoryId = Cdata[Cdata["name"] == keyword]["id"].values[0]
+        except IndexError:
+            print("ERROR: category don't exist")
+            sys.exit(1)
+
+        # draw graph
+        graph.DrawGraph(args.graph, CategoryId)
         sys.exit(1)
 
     # search for keyword in place
