@@ -3,7 +3,7 @@
 #
 # FileName: 	post
 # CreatedDate:  2018-05-09 11:23:37 +0900
-# LastModified: 2018-05-10 10:45:31 +0900
+# LastModified: 2018-05-13 10:21:55 +0900
 #
 
 
@@ -64,47 +64,54 @@ class Post():
         print("Account LIST")
         print(
             ' '.join(list(self.Accounts[self.Accounts["active"] == 1]['name'])))
-        Account = input("What is from Account?\n")
-        try:
-            self.Data['from_account_id'] = self.Accounts[self.Accounts["name"]
-                                                         == Account]["id"].values[0]
-        except IndexError:
-            print("ERROR: Account don't exist")
-            sys.exit(1)
-        print()
 
-        if self.Mode == 'transfer':
-            Account = input("What is to Account?\n")
+        if self.Mode == 'payment' or self.Mode == 'transfer':
+            Account = input("What is from Account?\n")
             try:
-                self.Data['to_account_id'] = self.Accounts[self.Accounts["name"] == Account]["id"].values[0]
+                self.Data['from_account_id'] = self.Accounts[self.Accounts["name"]
+                                                             == Account]["id"].values[0]
             except IndexError:
                 print("ERROR: Account don't exist")
                 sys.exit(1)
             print()
 
-        elif self.Mode == 'income' or self.Mode == 'payment':
+        if self.Mode == 'income' or self.Mode == 'transfer':
+            Account = input("What is to Account?\n")
+            try:
+                self.Data['to_account_id'] = self.Accounts[self.Accounts["name"]
+                                                           == Account]["id"].values[0]
+            except IndexError:
+                print("ERROR: Account don't exist")
+                sys.exit(1)
+            print()
+
+        if self.Mode == 'income' or self.Mode == 'payment':
             # category
             print("{0} category LIST".format(self.Mode))
             print(
                 ' '.join(list(self.Categories[self.Categories["mode"] == self.Mode]["name"])))
             Category = input("What is Category?\n")
             try:
-                self.Data['category_id'] = self.Categories[self.Categories["name"] == Category]["id"].values[0]
+                self.Data['category_id'] = self.Categories[self.Categories["name"]
+                                                           == Category]["id"].values[0]
             except IndexError:
                 print("ERROR: category don't exist")
                 sys.exit(1)
             print()
 
-            # genre
-            print("{0} genre LIST".format(Category))
-            print(' '.join(list(
-                self.Genres[self.Genres["category_id"] == self.Data['category_id']]['name'])))
-            Genre = input("What is Genre?\n")
-            try:
-                self.Data['genre_id'] = self.Genres[self.Genres["name"] == Genre]["id"].values[0]
-            except IndexError:
-                print("ERROR: genre don't exist")
-            print()
+            if self.Mode == 'payment':
+                # genre
+                print("{0} genre LIST".format(Category))
+                print(' '.join(list(
+                    self.Genres[self.Genres["category_id"] == self.Data['category_id']]['name'])))
+                Genre = input("What is Genre?\n")
+                try:
+                    self.Data['genre_id'] = self.Genres[self.Genres["name"]
+                                                        == Genre]["id"].values[0]
+                except IndexError:
+                    print("ERROR: genre don't exist")
+                    sys.exit(1)
+                print()
 
         else:
             print("ERROR: mode don't exist")
