@@ -3,7 +3,7 @@
 #
 # FileName: 	post
 # CreatedDate:  2018-05-09 11:23:37 +0900
-# LastModified: 2018-05-13 10:21:55 +0900
+# LastModified: 2018-05-14 17:43:42 +0900
 #
 
 
@@ -59,13 +59,16 @@ class Post():
         # mode
         self.Mode = input("Which is Mode?\npayment or income or transfer\n")
         print()
+        if not re.match("(payment|income|transfer)", self.Mode):
+            print("ERROR: mode don't exist")
+            sys.exit(1)
 
         # account
         print("Account LIST")
         print(
             ' '.join(list(self.Accounts[self.Accounts["active"] == 1]['name'])))
 
-        if self.Mode == 'payment' or self.Mode == 'transfer':
+        if re.match("(payment|transfer)", self.Mode):
             Account = input("What is from Account?\n")
             try:
                 self.Data['from_account_id'] = self.Accounts[self.Accounts["name"]
@@ -75,7 +78,7 @@ class Post():
                 sys.exit(1)
             print()
 
-        if self.Mode == 'income' or self.Mode == 'transfer':
+        if re.match("(income|transfer)", self.Mode):
             Account = input("What is to Account?\n")
             try:
                 self.Data['to_account_id'] = self.Accounts[self.Accounts["name"]
@@ -85,7 +88,7 @@ class Post():
                 sys.exit(1)
             print()
 
-        if self.Mode == 'income' or self.Mode == 'payment':
+        if re.match("(payment|income)", self.Mode):
             # category
             print("{0} category LIST".format(self.Mode))
             print(
@@ -112,10 +115,6 @@ class Post():
                     print("ERROR: genre don't exist")
                     sys.exit(1)
                 print()
-
-        else:
-            print("ERROR: mode don't exist")
-            sys.exit(1)
 
         for key in self.Data.keys():
             self.Data[key] = str(self.Data[key])
