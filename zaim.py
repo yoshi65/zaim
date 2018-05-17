@@ -3,7 +3,7 @@
 #
 # FileName: 	zaim
 # CreatedDate:  2017-12-04 19:10:34 +0900
-# LastModified: 2018-05-10 18:27:22 +0900
+# LastModified: 2018-05-17 12:13:05 +0900
 #
 
 
@@ -20,6 +20,7 @@ from IPython.display import display
 # myfunc
 from graph import Graph
 from post import Post
+from balance import Balance
 
 # authorize
 key_data = pd.read_csv("./key.csv")
@@ -48,8 +49,7 @@ def main():
     args = paresr.parse_args()
 
     # variable
-    Mdata = GetData("money", "money").loc[:, [
-        'amount', 'date', 'mode', 'place', 'category_id', 'genre_id']]
+    Mdata = GetData("money", "money")
     Cdata = GetData("category", "categories")
     Gdata = GetData("genre", "genres")
     # Vdata = verify()
@@ -72,6 +72,10 @@ def main():
 
     # draw monthly category graph
     graph.MonthlyCategoryGraph()
+
+    # calc balance
+    balance =Balance(Mdata, Adata)
+    balance.CalcBalance()
 
     # check option
     # draw category graph
@@ -107,6 +111,7 @@ def main():
     Mdata = Mdata.replace('\ 00:00:00$', '')
 
     # replace category_id with category_name
+    Mdata = Mdata.loc[:, ['amount', 'date', 'mode', 'place', 'category_id', 'genre_id']]
     Ctmp = Mdata['category_id']
     Gtmp = Mdata['genre_id']
     Mdata = Mdata.drop(['category_id', 'genre_id'], axis=1)
