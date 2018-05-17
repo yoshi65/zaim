@@ -3,7 +3,7 @@
 #
 # FileName: 	balance
 # CreatedDate:  2018-05-17 11:04:39 +0900
-# LastModified: 2018-05-17 12:12:22 +0900
+# LastModified: 2018-05-17 14:01:16 +0900
 #
 
 
@@ -12,15 +12,20 @@ import sys
 import numpy as np
 import pandas as pd
 import re
+from datetime import datetime
 
 
 class Balance():
     def __init__(self, Data, Accounts):
+        # varibale
+        self.Diff = pd.read_csv("./balance_diff.csv")
+
         # read Data
         self.Data = Data
+        self.Data['date'] = self.Data['date'].astype(datetime)
+        self.Data = self.Data[self.Data['date'] < datetime.now()]
         self.Accounts = Accounts[Accounts["active"]
                                  == 1].reset_index(drop=True)
-        self.Diff = pd.read_csv("./balance_diff.csv")
 
     def CalcBalance(self):
         BalanceList = []
