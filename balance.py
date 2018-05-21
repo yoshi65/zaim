@@ -3,7 +3,7 @@
 #
 # FileName: 	balance
 # CreatedDate:  2018-05-17 11:04:39 +0900
-# LastModified: 2018-05-17 14:01:16 +0900
+# LastModified: 2018-05-21 16:58:58 +0900
 #
 
 
@@ -43,5 +43,3 @@ class Balance():
                 print("{0}\t\t:{1}".format(Name, str(Total).rjust(8)))
             else:
                 print("{0}\t:{1}".format(Name, str(Total).rjust(8)))
-
-        print()
