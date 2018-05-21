@@ -11,8 +11,8 @@ hoge,hoge,hoge,hoge
 
 ## Usage
 ```sh:zaim.py
-usage: zaim.py [-h] [-p] [-i] [-m {payment,income,transfer}] [-n NUM]
-               [-g YYYY-MM]
+usage: zaim.py [-h] [-p] [-i] [-d [NUM]] [-m {payment,income,transfer}]
+               [-g [YYYY-MM]]
 
 Visualize household accounts in zaim.net as graphs and lists.
 
@@ -20,10 +20,12 @@ optional arguments:
   -h, --help            show this help message and exit
   -p, --place           search for KEYWORD in place
   -i, --input           Input data
+  -d [NUM], --display [NUM]
+                        Display latest household accounts(NUM is the number of
+                        data)
   -m {payment,income,transfer}, --mode {payment,income,transfer}
                         choice kind of movement of money
-  -n NUM, --num NUM     decide the number of movement to display
-  -g YYYY-MM, --graph YYYY-MM
+  -g [YYYY-MM], --graph [YYYY-MM]
                         select category and draw graph in a month
 ```
 
@@ -31,9 +33,14 @@ optional arguments:
 RelativePayment and MonthlyCategoryGraph function in graph.py is Japanese and a personal specifiction.
 
 ## Example
-By default, the last 10 payment(amount, amount, date, mode, place, category) is displayed.
+By default, The current remaining balance is displayed.
 ```sh
 % python3 zaim.py
+```
+
+If you want to display the last 10 payment(amount, amount, date, mode, place, category, genre).
+```sh
+% python3 zaim.py -d
 ```
 
 If you want to see daily expenditure in April 2018.

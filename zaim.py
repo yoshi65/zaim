@@ -3,7 +3,7 @@
 #
 # FileName: 	zaim
 # CreatedDate:  2017-12-04 19:10:34 +0900
-# LastModified: 2018-05-17 12:13:05 +0900
+# LastModified: 2018-05-21 16:53:04 +0900
 #
 
 
@@ -16,6 +16,7 @@ import requests
 from requests_oauthlib import OAuth1
 import argparse
 from IPython.display import display
+from datetime import datetime
 
 # myfunc
 from graph import Graph
@@ -39,12 +40,12 @@ def main():
                         help='search for KEYWORD in place', default=False)
     paresr.add_argument('-i', '--input', action='store_true',
                         help='Input data', default=False)
+    paresr.add_argument('-d', '--display', action='store', nargs='?',
+                        help='Display latest household accounts(NUM is the number of data)', const=10, metavar='NUM')
     paresr.add_argument('-m', '--mode', action='store', choices=[
                         'payment', 'income', 'transfer'], help='choice kind of movement of money', default='payment')
-    paresr.add_argument('-n', '--num', action='store',
-                        type=int, help='decide the number of movement to display', default=10)
-    paresr.add_argument('-g', '--graph', metavar='YYYY-MM', action='store',
-                        type=str, help='select category and draw graph in a month', default=0)
+    paresr.add_argument('-g', '--graph', metavar='YYYY-MM', action='store', nargs='?',
+                        type=str, help='select category and draw graph in a month', const=datetime.now().strftime("%Y-%m"))
     # graph option (type(int))
     args = paresr.parse_args()
 
@@ -57,13 +58,6 @@ def main():
     PayStr = "payment"
     IncStr = "income"
 
-    # input data
-    if args.input:
-        post = Post(Cdata, Gdata, Adata)
-        post.MakeInputData()
-        post.PostData(auth)
-        sys.exit(1)
-
     # constructor
     graph = Graph(Mdata, Cdata)
 
@@ -73,13 +67,16 @@ def main():
     # draw monthly category graph
     graph.MonthlyCategoryGraph()
 
-    # calc balance
-    balance =Balance(Mdata, Adata)
-    balance.CalcBalance()
+    # input data
+    if args.input:
+        post = Post(Cdata, Gdata, Adata)
+        post.MakeInputData()
+        post.PostData(auth)
+        sys.exit(1)
 
     # check option
     # draw category graph
-    if not args.graph == 0:
+    if args.graph is not None:
         # write category list
         print("CATEGORY LIST")
         print(PayStr)
@@ -100,30 +97,40 @@ def main():
         graph.DrawGraph(args.graph, CategoryId)
         sys.exit(1)
 
-    # search for keyword in place
-    if args.place:
-        keyword = input("What is location KEYWORD?\n")
-        Mdata = Mdata[Mdata["place"].str.contains(keyword)]
+    # display household accounts
+    if args.display is not None:
+        # search for keyword in place
+        if args.place:
+            keyword = input("What is location KEYWORD?\n")
+            Mdata = Mdata[Mdata["place"].str.contains(keyword)]
 
-    # set movement of money
-    Mdata = Mdata[Mdata["mode"].str.contains(
-        args.mode)].reset_index(drop=True)
-    Mdata = Mdata.replace('\ 00:00:00$', '')
+        # set movement of money
+        Mdata = Mdata[Mdata["mode"].str.contains(
+            args.mode)].reset_index(drop=True)
+        Mdata = Mdata.replace('\ 00:00:00$', '')
 
-    # replace category_id with category_name
-    Mdata = Mdata.loc[:, ['amount', 'date', 'mode', 'place', 'category_id', 'genre_id']]
-    Ctmp = Mdata['category_id']
-    Gtmp = Mdata['genre_id']
-    Mdata = Mdata.drop(['category_id', 'genre_id'], axis=1)
-    for i in range(0, len(Cdata.index)):
-        Ctmp = Ctmp.replace(Cdata.loc[i, "id"], Cdata.loc[i, "name"])
-    for i in range(0, len(Gdata.index)):
-        Gtmp = Gtmp.replace(Gdata.loc[i, "id"], Gdata.loc[i, "name"])
-    Mdata = pd.concat([Mdata, Ctmp, Gtmp], axis=1).rename(
-        columns={"category_id": "category", "genre_id": "genre"})
+        # replace category_id with category_name
+        Mdata = Mdata.loc[:, ['amount', 'date', 'mode',
+                              'place', 'category_id', 'genre_id']]
+        Ctmp = Mdata['category_id']
+        Gtmp = Mdata['genre_id']
+        Mdata = Mdata.drop(['category_id', 'genre_id'], axis=1)
+        for i in range(0, len(Cdata.index)):
+            Ctmp = Ctmp.replace(Cdata.loc[i, "id"], Cdata.loc[i, "name"])
+        for i in range(0, len(Gdata.index)):
+            Gtmp = Gtmp.replace(Gdata.loc[i, "id"], Gdata.loc[i, "name"])
+        Mdata = pd.concat([Mdata, Ctmp, Gtmp], axis=1).rename(
+            columns={"category_id": "category", "genre_id": "genre"})
 
-    # output
-    display(Mdata.loc[:(args.num - 1), :])
+        # output
+        display(Mdata.loc[:(args.display - 1), :])
+
+        sys.exit(1)
+
+    # calc balance
+    balance = Balance(Mdata, Adata)
+    balance.CalcBalance()
+
 
 
 # def verify():
