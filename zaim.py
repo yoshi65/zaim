@@ -3,7 +3,7 @@
 #
 # FileName: 	zaim
 # CreatedDate:  2017-12-04 19:10:34 +0900
-# LastModified: 2018-05-21 16:53:04 +0900
+# LastModified: 2018-05-22 17:01:35 +0900
 #
 
 
@@ -24,7 +24,8 @@ from post import Post
 from balance import Balance
 
 # authorize
-key_data = pd.read_csv("./key.csv")
+key_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), "key.csv")
+key_data = pd.read_csv(key_path)
 consumer_key = key_data["consumer_key"].values[0]
 consumer_secret = key_data["consumer_secret"].values[0]
 access_token = key_data["access_token"].values[0]
