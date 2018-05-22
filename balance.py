@@ -3,7 +3,7 @@
 #
 # FileName: 	balance
 # CreatedDate:  2018-05-17 11:04:39 +0900
-# LastModified: 2018-05-22 16:35:02 +0900
+# LastModified: 2018-05-22 17:53:37 +0900
 #
 
 
@@ -18,9 +18,9 @@ from datetime import datetime
 class Balance():
     def __init__(self, Data, Accounts):
         # varibale
-        diff_file = os.path.join(os.path.abspath(os.path.dirname(__file__)), "balance_diff.csv")
-        if os.path.isfile(diff_file):
-            self.Diff = pd.read_csv(diff_file)
+        self.diff_file = os.path.join(os.path.abspath(os.path.dirname(__file__)), "balance_diff.csv")
+        if os.path.isfile(self.diff_file):
+            self.Diff = pd.read_csv(self.diff_file)
         else:
             self.Diff = pd.DataFrame(np.zeros([1, len(Accounts.index)], dtype=int), columns=[ str(x) for x in list(Accounts["local_id"]) ])
 
@@ -47,3 +47,29 @@ class Balance():
                 print("{0}\t\t:{1}".format(Name, str(Total).rjust(8)))
             else:
                 print("{0}\t:{1}".format(Name, str(Total).rjust(8)))
+
+    def MakeBalanceDiff(self):
+        BalanceList = []
+        print("Actual balance check")
+
+        # check
+        for index in range(0, len(self.Accounts.index)):
+            AccountId = self.Accounts.loc[index, "id"]
+            Total = self.Data[self.Data["to_account_id"] == AccountId]["amount"].sum(
+            ) - self.Data[self.Data["from_account_id"] == AccountId]["amount"].sum() - self.Diff[str(AccountId)].values[0]
+            Name = self.Accounts.loc[index, "name"]
+
+            # input
+            diff = input("how much is actual balance of {}?\n".format(Name))
+            if not re.match("^[0-9][0-9]*$", diff):
+                print("ERROR: ")
+                sys.exit(1)
+
+            # calc
+            BalanceList.append(Total - int(diff))
+
+        # make diff
+        BalanceDiff = pd.DataFrame([BalanceList], columns=[ str(x) for x in list(self.Accounts["local_id"]) ])
+
+        # output
+        BalanceDiff.to_csv(self.diff_file, index=False)
