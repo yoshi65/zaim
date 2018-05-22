@@ -34,6 +34,7 @@ RelativePayment and MonthlyCategoryGraph function in graph.py is Japanese and a 
 
 ## Example
 By default, The current remaining balance is displayed.
+If results differ from the actual balance, please write the difference in `balance_diff.csv`.
 ```sh
 % python3 zaim.py
 ```

@@ -3,7 +3,7 @@
 #
 # FileName: 	balance
 # CreatedDate:  2018-05-17 11:04:39 +0900
-# LastModified: 2018-05-21 16:58:58 +0900
+# LastModified: 2018-05-22 16:35:02 +0900
 #
 
 
@@ -18,7 +18,11 @@ from datetime import datetime
 class Balance():
     def __init__(self, Data, Accounts):
         # varibale
-        self.Diff = pd.read_csv("./balance_diff.csv")
+        diff_file = os.path.join(os.path.abspath(os.path.dirname(__file__)), "balance_diff.csv")
+        if os.path.isfile(diff_file):
+            self.Diff = pd.read_csv(diff_file)
+        else:
+            self.Diff = pd.DataFrame(np.zeros([1, len(Accounts.index)], dtype=int), columns=[ str(x) for x in list(Accounts["local_id"]) ])
 
         # read Data
         self.Data = Data
