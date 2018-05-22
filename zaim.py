@@ -3,7 +3,7 @@
 #
 # FileName: 	zaim
 # CreatedDate:  2017-12-04 19:10:34 +0900
-# LastModified: 2018-05-21 16:53:04 +0900
+# LastModified: 2018-05-22 18:56:02 +0900
 #
 
 
@@ -34,20 +34,22 @@ auth = OAuth1(consumer_key, consumer_secret, access_token, access_secret)
 
 def main():
     # set option
-    paresr = argparse.ArgumentParser(
+    parser = argparse.ArgumentParser(
         description="Visualize household accounts in zaim.net as graphs and lists.")
-    paresr.add_argument('-p', '--place', action='store_true',
+    parser.add_argument('-p', '--place', action='store_true',
                         help='search for KEYWORD in place', default=False)
-    paresr.add_argument('-i', '--input', action='store_true',
+    parser.add_argument('-i', '--input', action='store_true',
                         help='Input data', default=False)
-    paresr.add_argument('-d', '--display', action='store', nargs='?',
+    parser.add_argument('-d', '--display', action='store', nargs='?',
                         help='Display latest household accounts(NUM is the number of data)', const=10, metavar='NUM')
-    paresr.add_argument('-m', '--mode', action='store', choices=[
+    parser.add_argument('-m', '--mode', action='store', choices=[
                         'payment', 'income', 'transfer'], help='choice kind of movement of money', default='payment')
-    paresr.add_argument('-g', '--graph', metavar='YYYY-MM', action='store', nargs='?',
+    parser.add_argument('-g', '--graph', metavar='YYYY-MM', action='store', nargs='?',
                         type=str, help='select category and draw graph in a month', const=datetime.now().strftime("%Y-%m"))
+    parser.add_argument('-b', '--balance-make', action='store_true',
+                        help='make balance difference', default=False)
     # graph option (type(int))
-    args = paresr.parse_args()
+    args = parser.parse_args()
 
     # variable
     Mdata = GetData("money", "money")
@@ -127,10 +129,16 @@ def main():
 
         sys.exit(1)
 
-    # calc balance
+    # constructor
     balance = Balance(Mdata, Adata)
-    balance.CalcBalance()
 
+    # make balance difference
+    if args.balance_make:
+        balance.MakeBalanceDiff()
+        sys.exit(1)
+
+    # calc balance
+    balance.CalcBalance()
 
 
 # def verify():
