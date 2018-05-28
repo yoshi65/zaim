@@ -3,7 +3,7 @@
 #
 # FileName: 	zaim
 # CreatedDate:  2017-12-04 19:10:34 +0900
-# LastModified: 2018-05-22 18:56:02 +0900
+# LastModified: 2018-05-28 13:15:20 +0900
 #
 
 
@@ -47,7 +47,7 @@ def main():
     parser.add_argument('-g', '--graph', metavar='YYYY-MM', action='store', nargs='?',
                         type=str, help='select category and draw graph in a month', const=datetime.now().strftime("%Y-%m"))
     parser.add_argument('-b', '--balance-make', action='store_true',
-                        help='make balance difference', default=False)
+                        help='make balance difference between actual and calculated balance', default=False)
     # graph option (type(int))
     args = parser.parse_args()
 
@@ -69,6 +69,7 @@ def main():
     # draw monthly category graph
     graph.MonthlyCategoryGraph()
 
+    # check option
     # input data
     if args.input:
         post = Post(Cdata, Gdata, Adata)
@@ -76,7 +77,6 @@ def main():
         post.PostData(auth)
         sys.exit(1)
 
-    # check option
     # draw category graph
     if args.graph is not None:
         # write category list
@@ -100,9 +100,10 @@ def main():
         sys.exit(1)
 
     # display household accounts
-    if args.display is not None:
+    if (args.display is not None) or args.place:
         # search for keyword in place
         if args.place:
+            args.display = 10
             keyword = input("What is location KEYWORD?\n")
             Mdata = Mdata[Mdata["place"].str.contains(keyword)]
 

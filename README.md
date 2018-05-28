@@ -12,7 +12,7 @@ hoge,hoge,hoge,hoge
 ## Usage
 ```sh:zaim.py
 usage: zaim.py [-h] [-p] [-i] [-d [NUM]] [-m {payment,income,transfer}]
-               [-g [YYYY-MM]]
+               [-g [YYYY-MM]] [-b]
 
 Visualize household accounts in zaim.net as graphs and lists.
 
@@ -27,6 +27,8 @@ optional arguments:
                         choice kind of movement of money
   -g [YYYY-MM], --graph [YYYY-MM]
                         select category and draw graph in a month
+  -b, --balance-make    make balance difference between actual and calculated
+                        balance
 ```
 
 ### Attention
@@ -34,7 +36,7 @@ RelativePayment and MonthlyCategoryGraph function in graph.py is Japanese and a 
 
 ## Example
 By default, The current remaining balance is displayed.
-If results differ from the actual balance, please write the difference in `balance_diff.csv`.
+If results differ from the actual balance, please use `-b` option to generate the difference in `balance_diff.csv`.
 ```sh
 % python3 zaim.py
 ```
