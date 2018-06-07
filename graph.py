@@ -3,7 +3,7 @@
 #
 # FileName: 	graph
 # CreatedDate:  2018-04-13 14:12:23 +0900
-# LastModified: 2018-05-10 18:26:58 +0900
+# LastModified: 2018-06-07 15:09:54 +0900
 #
 
 
@@ -236,7 +236,7 @@ class Graph():
         ax = plt.gca().add_artist(leg1)
         leg2 = plt.legend(handles=PayLabel, bbox_to_anchor=(
             1.05, 0), loc="lower left", title="payment category")
-        plt.xticks(ran + width / 2, self.monthList)
+        plt.xticks(ran + width / 2, self.monthList, rotation=45)
         plt.tight_layout()
         plt.savefig(output_name)
         plt.close(fig)
