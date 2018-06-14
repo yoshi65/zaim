@@ -3,6 +3,7 @@
 key.csv
 auth.py
 balance_diff.csv
+ModeDict.json
 # from MacOSX
 .DS_Store
 # Emacs backup files

@@ -3,7 +3,7 @@
 #
 # FileName: 	graph
 # CreatedDate:  2018-04-13 14:12:23 +0900
-# LastModified: 2018-06-07 15:09:54 +0900
+# LastModified: 2018-06-14 13:37:55 +0900
 #
 
 
@@ -11,6 +11,7 @@ import os
 import sys
 import numpy as np
 import pandas as pd
+import json
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import calendar
@@ -22,11 +23,46 @@ from datetime import datetime
 class Graph():
 
     def __init__(self, Data, Categories):
-        # read Data
+        # read argument
         self.Data = Data
         self.Data['date'] = self.Data['date'].astype(datetime)
         self.Data = self.Data.set_index('date')
         self.Categories = Categories
+
+        # set default dict
+        self.IncDict = {
+            "Income": [11],  # 給与所得
+            "Relative Income": [12],  # 立替金返済
+            "Bonus": [13],  # 賞与
+            "Extraordinary Income": [14],  # 臨時収入
+            "Business": [15],  # 事業所得
+            "Others": [19]  # その他
+        }
+        self.PayDict = {
+            "Food": [101],  # 食費
+            "Daily Goods": [102],  # 日用雑貨
+            "Transportation": [103],  # 交通
+            "Medical・Insurance": [104],  # 医療・保険
+            "Car": [105],  # クルマ
+            "Utility": [106], # 水道・光熱
+            "Relationship": [107],  # 交際費
+            "Entertainment": [108],  # エンタメ
+            "Education": [109],  # 教育・教養
+            "Telecommunications": [110],  # 通信
+            "Beauty, Clothes": [111],  # 美容・衣服
+            "Utility": [112],  # 住まい
+            "Tax": [113],  # 税金
+            "Large Spending": [114],  # 大型出費
+            "Others": [199]  # その他
+        }
+
+        # read json file
+        DataPath = os.path.join(os.path.abspath(os.path.dirname(__file__)), "ModeDict.json")
+        if os.path.isfile(DataPath):
+            with open('ModeDict.json') as f:
+                ModeDict = json.load(f)
+            self.IncDict = ModeDict['IncDict']
+            self.PayDict = ModeDict['PayDict']
 
         # set monthList
         self.monthList = []
@@ -36,27 +72,6 @@ class Graph():
         y = 2018
         for m in range(1, int(datetime.now().strftime("%m")) + 1):
             self.monthList.append(str(str(y) + "-" + str(m).zfill(2)))
-
-        # trans category
-        self.IncDict = {
-            "Income": [11],  # 給与所得
-            "Relative Income": [12],  # 立替金返済
-            "Remittance": [35925503],  # 仕送り
-            "Extraordinary Income": [14],  # 臨時収入
-            "Others": [13, 15, 19]  # 賞与, 事業所得, その他
-        }
-        self.PayDict = {
-            "Food": [101],  # 食費
-            "Daily Goods": [102],  # 日用雑貨
-            "Transportation": [103],  # 交通
-            "Relationship": [107],  # 交際費
-            "Entertainment": [108],  # エンタメ
-            "Education": [109],  # 教育・教養
-            "Beauty, Clothes": [111],  # 美容・衣服
-            "Large Spending": [114],  # 大型出費
-            "Utility": [104, 105, 106, 110, 112],  # 医療・保険, クルマ, 水道・光熱, 通信, 住まい
-            "Others": [113, 199]  # 税金, その他
-        }
 
         # setting matplotlib
         plt.rc('text', usetex=True)
