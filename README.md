@@ -3,7 +3,7 @@ Visualize household accounts in [zaim](https://zaim.net/) as graphs and lists.
 And, add household account book on the command line.
 
 ## Preparation
-After authentication with OAuth with reference to [How to authorize](https://dev.zaim.net/home/api/authorize), please make `key.csv`.
+After authentication with OAuth with reference to [How to authorize](https://dev.zaim.net/home/api/authorize), please make `input/key.csv`.
 ```csv:key.csv
 consumer_key,consumer_secret,access_token,access_secret
 hoge,hoge,hoge,hoge
@@ -36,7 +36,7 @@ RelativePayment and MonthlyCategoryGraph function in graph.py is Japanese and a 
 
 ## Example
 By default, The current remaining balance is displayed.
-If results differ from the actual balance, please use `-b` option to generate the difference in `balance_diff.csv`.
+If results differ from the actual balance, please use `-b` option to generate the difference in `input/balance_diff.csv`.
 ```sh
 % python3 zaim.py
 ```
@@ -50,7 +50,7 @@ If you want to see daily expenditure in April 2018.
 ```sh
 % python3 zaim.py -g 2018-04
 ```
-After you choice category or genre, draw graph and output in `./data`.
+After you choice category or genre, draw graph and output in `output`.
 
 If you want to add household account book.
 ```sh

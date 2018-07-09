@@ -3,7 +3,7 @@
 #
 # FileName: 	graph
 # CreatedDate:  2018-04-13 14:12:23 +0900
-# LastModified: 2018-06-14 13:37:55 +0900
+# LastModified: 2018-07-09 11:07:08 +0900
 #
 
 
@@ -57,9 +57,9 @@ class Graph():
         }
 
         # read json file
-        DataPath = os.path.join(os.path.abspath(os.path.dirname(__file__)), "ModeDict.json")
+        DataPath = os.path.join(os.path.abspath(os.path.dirname(__file__)), "input/ModeDict.json")
         if os.path.isfile(DataPath):
-            with open('ModeDict.json') as f:
+            with open(DataPath) as f:
                 ModeDict = json.load(f)
             self.IncDict = ModeDict['IncDict']
             self.PayDict = ModeDict['PayDict']
@@ -79,7 +79,7 @@ class Graph():
 
         # output path
         self.dir_path = os.path.dirname(os.path.abspath(__file__))
-        self.output_path = os.path.join(self.dir_path, "data")
+        self.output_path = os.path.join(self.dir_path, "output")
 
         # set output directory
         try:
