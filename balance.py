@@ -3,7 +3,7 @@
 #
 # FileName: 	balance
 # CreatedDate:  2018-05-17 11:04:39 +0900
-# LastModified: 2018-07-09 11:02:19 +0900
+# LastModified: 2018-07-11 18:03:11 +0900
 #
 
 
@@ -61,7 +61,7 @@ class Balance():
 
             # input
             diff = input("how much is actual balance of {}?\n".format(Name))
-            if not re.match("^[0-9][0-9]*$", diff):
+            if not re.match("^-*[0-9][0-9]*$", diff):
                 print("ERROR: ")
                 sys.exit(1)
 
