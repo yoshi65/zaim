@@ -3,7 +3,7 @@
 #
 # FileName: 	graph
 # CreatedDate:  2018-04-13 14:12:23 +0900
-# LastModified: 2018-07-09 11:07:08 +0900
+# LastModified: 2018-07-30 13:42:04 +0900
 #
 
 
@@ -76,6 +76,8 @@ class Graph():
         # setting matplotlib
         plt.rc('text', usetex=True)
         plt.rc('font', family='serif')
+        plt.rc('xtick', direction='in')
+        plt.rc('ytick', direction='in')
 
         # output path
         self.dir_path = os.path.dirname(os.path.abspath(__file__))
