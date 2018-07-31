@@ -3,7 +3,7 @@
 #
 # FileName: 	balance
 # CreatedDate:  2018-05-17 11:04:39 +0900
-# LastModified: 2018-07-11 18:03:11 +0900
+# LastModified: 2018-07-31 11:39:49 +0900
 #
 
 
@@ -18,11 +18,13 @@ from datetime import datetime
 class Balance():
     def __init__(self, Data, Accounts):
         # varibale
-        self.diff_file = os.path.join(os.path.abspath(os.path.dirname(__file__)), "input/balance_diff.csv")
+        self.diff_file = os.path.join(os.path.abspath(
+            os.path.dirname(__file__)), "input/balance_diff.csv")
         if os.path.isfile(self.diff_file):
             self.Diff = pd.read_csv(self.diff_file)
         else:
-            self.Diff = pd.DataFrame(np.zeros([1, len(Accounts.index)], dtype=int), columns=[ str(x) for x in list(Accounts["local_id"]) ])
+            self.Diff = pd.DataFrame(np.zeros([1, len(Accounts.index)], dtype=int), columns=[
+                                     str(x) for x in list(Accounts["local_id"])])
 
         # read Data
         self.Data = Data
@@ -69,7 +71,8 @@ class Balance():
             BalanceList.append(Total - int(diff))
 
         # make diff
-        BalanceDiff = pd.DataFrame([BalanceList], columns=[ str(x) for x in list(self.Accounts["local_id"]) ])
+        BalanceDiff = pd.DataFrame([BalanceList], columns=[
+                                   str(x) for x in list(self.Accounts["local_id"])])
 
         # output
         BalanceDiff.to_csv(self.diff_file, index=False)

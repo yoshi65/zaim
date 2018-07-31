@@ -3,7 +3,7 @@
 #
 # FileName: 	graph
 # CreatedDate:  2018-04-13 14:12:23 +0900
-# LastModified: 2018-07-30 13:42:04 +0900
+# LastModified: 2018-07-31 11:40:30 +0900
 #
 
 
@@ -44,7 +44,7 @@ class Graph():
             "Transportation": [103],  # 交通
             "Medical・Insurance": [104],  # 医療・保険
             "Car": [105],  # クルマ
-            "Utility": [106], # 水道・光熱
+            "Utility": [106],  # 水道・光熱
             "Relationship": [107],  # 交際費
             "Entertainment": [108],  # エンタメ
             "Education": [109],  # 教育・教養
@@ -57,7 +57,8 @@ class Graph():
         }
 
         # read json file
-        DataPath = os.path.join(os.path.abspath(os.path.dirname(__file__)), "input/ModeDict.json")
+        DataPath = os.path.join(os.path.abspath(
+            os.path.dirname(__file__)), "input/ModeDict.json")
         if os.path.isfile(DataPath):
             with open(DataPath) as f:
                 ModeDict = json.load(f)
