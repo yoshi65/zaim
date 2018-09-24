@@ -3,7 +3,7 @@
 #
 # FileName: 	graph
 # CreatedDate:  2018-04-13 14:12:23 +0900
-# LastModified: 2018-07-31 11:40:30 +0900
+# LastModified: 2018-09-24 13:18:45 +0900
 #
 
 
@@ -204,7 +204,7 @@ class Graph():
         plt.xlabel(r"month", fontsize=16)
         plt.ylabel(r"money [yen]", fontsize=16)
         plt.legend(loc="best")
-        plt.xticks(ran + width / 2, self.monthList)
+        plt.xticks(ran + width / 2, self.monthList, rotation=45)
         plt.tight_layout()
         plt.savefig(output_name)
         plt.close(fig)
