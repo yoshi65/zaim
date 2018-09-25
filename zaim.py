@@ -3,7 +3,7 @@
 #
 # FileName: 	zaim
 # CreatedDate:  2017-12-04 19:10:34 +0900
-# LastModified: 2018-07-31 11:36:19 +0900
+# LastModified: 2018-09-25 10:04:40 +0900
 #
 
 
@@ -42,7 +42,7 @@ def main():
                         help='search for KEYWORD in place', default=False)
     parser.add_argument('-i', '--input', action='store_true',
                         help='Input data', default=False)
-    parser.add_argument('-d', '--display', action='store', nargs='?',
+    parser.add_argument('-d', '--display', action='store', nargs='?', type=int,
                         help='Display latest household accounts(NUM is the number of data)', const=10, metavar='NUM')
     parser.add_argument('-m', '--mode', action='store', choices=[
                         'payment', 'income', 'transfer'], help='choice kind of movement of money', default='payment')
