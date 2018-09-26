@@ -3,29 +3,28 @@
 #
 # FileName: 	zaim
 # CreatedDate:  2017-12-04 19:10:34 +0900
-# LastModified: 2018-09-25 10:04:40 +0900
+# LastModified: 2018-09-26 11:34:00 +0900
 #
 
-
+import argparse
+import json
 import os
 import sys
-import json
-import numpy as np
-import pandas as pd
-import requests
-from requests_oauthlib import OAuth1
-import argparse
-from IPython.display import display
 from datetime import datetime
 
+import pandas as pd
+import requests
+from IPython.display import display
+from requests_oauthlib import OAuth1
+
+from balance import Balance
 # myfunc
 from graph import Graph
 from post import Post
-from balance import Balance
 
 # authorize
-key_path = os.path.join(os.path.abspath(
-    os.path.dirname(__file__)), "input/key.csv")
+key_path = os.path.join(
+    os.path.abspath(os.path.dirname(__file__)), "input/key.csv")
 key_data = pd.read_csv(key_path)
 consumer_key = key_data["consumer_key"].values[0]
 consumer_secret = key_data["consumer_secret"].values[0]
@@ -37,19 +36,47 @@ auth = OAuth1(consumer_key, consumer_secret, access_token, access_secret)
 def main():
     # set option
     parser = argparse.ArgumentParser(
-        description="Visualize household accounts in zaim.net as graphs and lists.")
-    parser.add_argument('-p', '--place', action='store_true',
-                        help='search for KEYWORD in place', default=False)
-    parser.add_argument('-i', '--input', action='store_true',
-                        help='Input data', default=False)
-    parser.add_argument('-d', '--display', action='store', nargs='?', type=int,
-                        help='Display latest household accounts(NUM is the number of data)', const=10, metavar='NUM')
-    parser.add_argument('-m', '--mode', action='store', choices=[
-                        'payment', 'income', 'transfer'], help='choice kind of movement of money', default='payment')
-    parser.add_argument('-g', '--graph', metavar='YYYY-MM', action='store', nargs='?',
-                        type=str, help='select category and draw graph in a month', const=datetime.now().strftime("%Y-%m"))
-    parser.add_argument('-b', '--balance-make', action='store_true',
-                        help='make balance difference between actual and calculated balance', default=False)
+        description=
+        "Visualize household accounts in zaim.net as graphs and lists.")
+    parser.add_argument(
+        '-p',
+        '--place',
+        action='store_true',
+        help='search for KEYWORD in place',
+        default=False)
+    parser.add_argument(
+        '-i', '--input', action='store_true', help='Input data', default=False)
+    parser.add_argument(
+        '-d',
+        '--display',
+        action='store',
+        nargs='?',
+        type=int,
+        help='Display latest household accounts(NUM is the number of data)',
+        const=10,
+        metavar='NUM')
+    parser.add_argument(
+        '-m',
+        '--mode',
+        action='store',
+        choices=['payment', 'income', 'transfer'],
+        help='choice kind of movement of money',
+        default='payment')
+    parser.add_argument(
+        '-g',
+        '--graph',
+        metavar='YYYY-MM',
+        action='store',
+        nargs='?',
+        type=str,
+        help='select category and draw graph in a month',
+        const=datetime.now().strftime("%Y-%m"))
+    parser.add_argument(
+        '-b',
+        '--balance-make',
+        action='store_true',
+        help='make balance difference between actual and calculated balance',
+        default=False)
     # graph option (type(int))
     args = parser.parse_args()
 
@@ -115,8 +142,9 @@ def main():
         Mdata = Mdata.replace('\ 00:00:00$', '')
 
         # replace category_id with category_name
-        Mdata = Mdata.loc[:, ['amount', 'date', 'mode',
-                              'place', 'category_id', 'genre_id']]
+        Mdata = Mdata.loc[:, [
+            'amount', 'date', 'mode', 'place', 'category_id', 'genre_id'
+        ]]
         Ctmp = Mdata['category_id']
         Gtmp = Mdata['genre_id']
         Mdata = Mdata.drop(['category_id', 'genre_id'], axis=1)
@@ -124,8 +152,11 @@ def main():
             Ctmp = Ctmp.replace(Cdata.loc[i, "id"], Cdata.loc[i, "name"])
         for i in range(0, len(Gdata.index)):
             Gtmp = Gtmp.replace(Gdata.loc[i, "id"], Gdata.loc[i, "name"])
-        Mdata = pd.concat([Mdata, Ctmp, Gtmp], axis=1).rename(
-            columns={"category_id": "category", "genre_id": "genre"})
+        Mdata = pd.concat([Mdata, Ctmp, Gtmp],
+                          axis=1).rename(columns={
+                              "category_id": "category",
+                              "genre_id": "genre"
+                          })
 
         # output
         display(Mdata.loc[:(args.display - 1), :])

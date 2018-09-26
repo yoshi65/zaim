@@ -3,25 +3,23 @@
 #
 # FileName: 	graph
 # CreatedDate:  2018-04-13 14:12:23 +0900
-# LastModified: 2018-09-24 13:18:45 +0900
+# LastModified: 2018-09-26 11:31:56 +0900
 #
 
-
+import calendar
+import json
 import os
-import sys
+import re
+from datetime import datetime
+
+import matplotlib.dates as mdates
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import json
-import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
-import calendar
-import re
 from matplotlib import ticker
-from datetime import datetime
 
 
 class Graph():
-
     def __init__(self, Data, Categories):
         # read argument
         self.Data = Data
@@ -57,8 +55,8 @@ class Graph():
         }
 
         # read json file
-        DataPath = os.path.join(os.path.abspath(
-            os.path.dirname(__file__)), "input/ModeDict.json")
+        DataPath = os.path.join(
+            os.path.abspath(os.path.dirname(__file__)), "input/ModeDict.json")
         if os.path.isfile(DataPath):
             with open(DataPath) as f:
                 ModeDict = json.load(f)
@@ -92,12 +90,13 @@ class Graph():
 
     def MakeList(self, Mode, CategoryId, Month):
         NumofDays = calendar.monthrange(
-            int(re.sub(r"-.*$", "", Month)), int(re.sub(r"^.*-", "", Month)))[1]
+            int(re.sub(r"-.*$", "", Month)), int(re.sub(r"^.*-", "",
+                                                        Month)))[1]
         DataList = self.Data[self.Data["mode"] == Mode]
-        if not CategoryId is None:
+        if CategoryId is not None:
             DataList = DataList[DataList["category_id"] == CategoryId]
-        DataList = DataList.resample(
-            'D').sum()[Month + '-01':Month + '-' + str(NumofDays)]
+        DataList = DataList.resample('D').sum()[Month + '-01':Month + '-' +
+                                                str(NumofDays)]
         DataList = DataList.fillna(0)
         return DataList
 
@@ -134,14 +133,14 @@ class Graph():
 
     def DrawGraph(self, month, CategoryId):
         # variable
-        CategoryName = self.Categories[self.Categories["id"]
-                                       == CategoryId]["name"].values[0]
-        Mode = self.Categories[self.Categories["id"]
-                               == CategoryId]["mode"].values[0]
+        CategoryName = self.Categories[self.Categories["id"] ==
+                                       CategoryId]["name"].values[0]
+        Mode = self.Categories[self.Categories["id"] ==
+                               CategoryId]["mode"].values[0]
 
         # output path
-        output_name = os.path.join(
-            self.output_path, "{0}_{1}.pdf".format(CategoryName, month))
+        output_name = os.path.join(self.output_path, "{0}_{1}.pdf".format(
+            CategoryName, month))
 
         # arrange data
         SumList = self.MakeList(Mode, CategoryId, month)
@@ -150,7 +149,7 @@ class Graph():
         width = 0.3
         fig = plt.figure()
         ax = fig.add_subplot(1, 1, 1)
-        ax.bar(SumList.index, SumList['amount'], width=0.3)
+        ax.bar(SumList.index, SumList['amount'], width=width)
         xfmt = mdates.DateFormatter("%y/%m/%d")
         xloc = mdates.DayLocator()
         ax.xaxis.set_major_locator(xloc)
@@ -167,8 +166,7 @@ class Graph():
 
     def RelativePayment(self):
         # variable
-        output_name = os.path.join(
-            self.output_path, "RelativePayment.pdf")
+        output_name = os.path.join(self.output_path, "RelativePayment.pdf")
         AdRepaymentId = 12  # Category Id of "立替金返済"
 
         # arrange data
@@ -197,10 +195,18 @@ class Graph():
         width = 0.3
         fig = plt.figure()
         ax = fig.add_subplot(1, 1, 1)
-        ax.bar(ran, RelaIncomeList, width=width,
-               color="red", label="Relative Income")
-        ax.bar(ran + width, RelaPaymentList, width=width,
-               color="blue", label="Relative Payment")
+        ax.bar(
+            ran,
+            RelaIncomeList,
+            width=width,
+            color="red",
+            label="Relative Income")
+        ax.bar(
+            ran + width,
+            RelaPaymentList,
+            width=width,
+            color="blue",
+            label="Relative Payment")
         plt.xlabel(r"month", fontsize=16)
         plt.ylabel(r"money [yen]", fontsize=16)
         plt.legend(loc="best")
@@ -211,8 +217,8 @@ class Graph():
 
     def MonthlyCategoryGraph(self):
         # output path
-        output_name = os.path.join(
-            self.output_path, "MonthlyCategoryGraph" + ".pdf")
+        output_name = os.path.join(self.output_path,
+                                   "MonthlyCategoryGraph" + ".pdf")
 
         # arrange data
         IncomeList = self.MakeModeList("income")
@@ -229,7 +235,12 @@ class Graph():
         IncLabel = []
         for InKey in self.IncDict.keys():
             IncLabel.append(
-                ax.bar(ran, IncomeList[InKey], width=width, label=InKey, bottom=before))
+                ax.bar(
+                    ran,
+                    IncomeList[InKey],
+                    width=width,
+                    label=InKey,
+                    bottom=before))
             if before.sum() == 0:
                 before = IncomeList[InKey]
             else:
@@ -239,8 +250,13 @@ class Graph():
         before = np.zeros(len(self.monthList))
         PayLabel = []
         for PayKey in self.PayDict.keys():
-            PayLabel.append(ax.bar(
-                ran + width, PaymentList[PayKey], width=width, label=PayKey, bottom=before))
+            PayLabel.append(
+                ax.bar(
+                    ran + width,
+                    PaymentList[PayKey],
+                    width=width,
+                    label=PayKey,
+                    bottom=before))
             if before.sum() == 0:
                 before = PaymentList[PayKey]
             else:
@@ -249,11 +265,17 @@ class Graph():
         plt.title(r"Monthly Category Graph(income and payment)")
         plt.xlabel(r"month", fontsize=16)
         plt.ylabel(r"money [yen]", fontsize=16)
-        leg1 = plt.legend(handles=IncLabel, bbox_to_anchor=(
-            1.05, 1), loc="upper left", title="income category")
+        leg1 = plt.legend(
+            handles=IncLabel,
+            bbox_to_anchor=(1.05, 1),
+            loc="upper left",
+            title="income category")
         ax = plt.gca().add_artist(leg1)
-        leg2 = plt.legend(handles=PayLabel, bbox_to_anchor=(
-            1.05, 0), loc="lower left", title="payment category")
+        leg2 = plt.legend(
+            handles=PayLabel,
+            bbox_to_anchor=(1.05, 0),
+            loc="lower left",
+            title="payment category")
         plt.xticks(ran + width / 2, self.monthList, rotation=45)
         plt.tight_layout()
         plt.savefig(output_name)

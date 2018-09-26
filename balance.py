@@ -3,45 +3,48 @@
 #
 # FileName: 	balance
 # CreatedDate:  2018-05-17 11:04:39 +0900
-# LastModified: 2018-07-31 11:39:49 +0900
+# LastModified: 2018-09-26 11:30:02 +0900
 #
 
-
 import os
+import re
 import sys
+from datetime import datetime
+
 import numpy as np
 import pandas as pd
-import re
-from datetime import datetime
 
 
 class Balance():
     def __init__(self, Data, Accounts):
         # varibale
-        self.diff_file = os.path.join(os.path.abspath(
-            os.path.dirname(__file__)), "input/balance_diff.csv")
+        self.diff_file = os.path.join(
+            os.path.abspath(os.path.dirname(__file__)),
+            "input/balance_diff.csv")
         if os.path.isfile(self.diff_file):
             self.Diff = pd.read_csv(self.diff_file)
         else:
-            self.Diff = pd.DataFrame(np.zeros([1, len(Accounts.index)], dtype=int), columns=[
-                                     str(x) for x in list(Accounts["local_id"])])
+            self.Diff = pd.DataFrame(
+                np.zeros([1, len(Accounts.index)], dtype=int),
+                columns=[str(x) for x in list(Accounts["local_id"])])
 
         # read Data
         self.Data = Data
         self.Data['date'] = self.Data['date'].astype(datetime)
         self.Data = self.Data[self.Data['date'] < datetime.now()]
-        self.Accounts = Accounts[Accounts["active"]
-                                 == 1].reset_index(drop=True)
+        self.Accounts = Accounts[Accounts["active"] == 1].reset_index(
+            drop=True)
 
     def CalcBalance(self):
-        BalanceList = []
         print("Balance")
 
         # calc
         for index in range(0, len(self.Accounts.index)):
             AccountId = self.Accounts.loc[index, "id"]
-            Total = self.Data[self.Data["to_account_id"] == AccountId]["amount"].sum(
-            ) - self.Data[self.Data["from_account_id"] == AccountId]["amount"].sum() - self.Diff[str(AccountId)].values[0]
+            Total = self.Data[self.Data["to_account_id"] == AccountId][
+                "amount"].sum() - self.Data[
+                    self.Data["from_account_id"] == AccountId]["amount"].sum(
+                    ) - self.Diff[str(AccountId)].values[0]
             Name = self.Accounts.loc[index, "name"]
 
             # print
@@ -57,8 +60,10 @@ class Balance():
         # check
         for index in range(0, len(self.Accounts.index)):
             AccountId = self.Accounts.loc[index, "id"]
-            Total = self.Data[self.Data["to_account_id"] == AccountId]["amount"].sum(
-            ) - self.Data[self.Data["from_account_id"] == AccountId]["amount"].sum() - self.Diff[str(AccountId)].values[0]
+            Total = self.Data[self.Data["to_account_id"] == AccountId][
+                "amount"].sum() - self.Data[
+                    self.Data["from_account_id"] == AccountId]["amount"].sum(
+                    ) - self.Diff[str(AccountId)].values[0]
             Name = self.Accounts.loc[index, "name"]
 
             # input
@@ -71,8 +76,9 @@ class Balance():
             BalanceList.append(Total - int(diff))
 
         # make diff
-        BalanceDiff = pd.DataFrame([BalanceList], columns=[
-                                   str(x) for x in list(self.Accounts["local_id"])])
+        BalanceDiff = pd.DataFrame(
+            [BalanceList],
+            columns=[str(x) for x in list(self.Accounts["local_id"])])
 
         # output
         BalanceDiff.to_csv(self.diff_file, index=False)
