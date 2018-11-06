@@ -3,7 +3,7 @@
 #
 # FileName: 	graph
 # CreatedDate:  2018-04-13 14:12:23 +0900
-# LastModified: 2018-09-26 11:31:56 +0900
+# LastModified: 2018-11-06 10:16:01 +0900
 #
 
 import calendar
@@ -133,10 +133,14 @@ class Graph():
 
     def DrawGraph(self, month, CategoryId):
         # variable
-        CategoryName = self.Categories[self.Categories["id"] ==
-                                       CategoryId]["name"].values[0]
-        Mode = self.Categories[self.Categories["id"] ==
-                               CategoryId]["mode"].values[0]
+        if CategoryId is None:
+            CategoryName = "all"
+            Mode = "payment"
+        else:
+            CategoryName = self.Categories[self.Categories["id"] ==
+                                           CategoryId]["name"].values[0]
+            Mode = self.Categories[self.Categories["id"] ==
+                                   CategoryId]["mode"].values[0]
 
         # output path
         output_name = os.path.join(self.output_path, "{0}_{1}.pdf".format(
@@ -161,7 +165,6 @@ class Graph():
         plt.ylabel(r"money [yen]", fontsize=16)
         plt.tight_layout()
         plt.savefig(output_name)
-        plt.show()
         plt.close(fig)
 
     def RelativePayment(self):

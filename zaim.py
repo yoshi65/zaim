@@ -3,7 +3,7 @@
 #
 # FileName: 	zaim
 # CreatedDate:  2017-12-04 19:10:34 +0900
-# LastModified: 2018-09-26 11:34:00 +0900
+# LastModified: 2018-11-06 10:09:10 +0900
 #
 
 import argparse
@@ -115,9 +115,15 @@ def main():
         print(IncStr)
         print(' '.join(list(Cdata[Cdata["mode"] == IncStr]["name"])))
         print()
-        keyword = input("What is CATEGORY?\n")
+        keyword = input(
+            "What is CATEGORY? or If you want to Payment all , CATEGORY is \"all\"\n"
+        )
 
         # check category exist
+        if keyword == "all":
+            # draw graph
+            graph.DrawGraph(args.graph, None)
+            sys.exit(1)
         try:
             CategoryId = Cdata[Cdata["name"] == keyword]["id"].values[0]
         except IndexError:
