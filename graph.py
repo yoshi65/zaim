@@ -3,7 +3,7 @@
 #
 # FileName: 	graph
 # CreatedDate:  2018-04-13 14:12:23 +0900
-# LastModified: 2018-11-06 10:16:01 +0900
+# LastModified: 2019-03-28 12:35:54 +0900
 #
 
 import calendar
@@ -23,7 +23,6 @@ class Graph():
     def __init__(self, Data, Categories):
         # read argument
         self.Data = Data
-        self.Data['date'] = self.Data['date'].astype(datetime)
         self.Data = self.Data.set_index('date')
         self.Categories = Categories
 

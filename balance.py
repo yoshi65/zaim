@@ -3,7 +3,7 @@
 #
 # FileName: 	balance
 # CreatedDate:  2018-05-17 11:04:39 +0900
-# LastModified: 2018-09-26 11:30:02 +0900
+# LastModified: 2019-03-28 12:34:52 +0900
 #
 
 import os
@@ -30,7 +30,6 @@ class Balance():
 
         # read Data
         self.Data = Data
-        self.Data['date'] = self.Data['date'].astype(datetime)
         self.Data = self.Data[self.Data['date'] < datetime.now()]
         self.Accounts = Accounts[Accounts["active"] == 1].reset_index(
             drop=True)

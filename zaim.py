@@ -3,7 +3,7 @@
 #
 # FileName: 	zaim
 # CreatedDate:  2017-12-04 19:10:34 +0900
-# LastModified: 2018-11-06 10:09:10 +0900
+# LastModified: 2019-03-28 12:35:24 +0900
 #
 
 import argparse
@@ -82,6 +82,7 @@ def main():
 
     # variable
     Mdata = GetData("money", "money")
+    Mdata['data'] = pd.to_datetime(Mdata['date'])
     Cdata = GetData("category", "categories")
     Gdata = GetData("genre", "genres")
     # Vdata = verify()
