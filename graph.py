@@ -3,10 +3,11 @@
 #
 # FileName: 	graph
 # CreatedDate:  2018-04-13 14:12:23 +0900
-# LastModified: 2019-03-28 12:35:54 +0900
+# LastModified: 2019-03-28 13:58:23 +0900
 #
 
 import calendar
+import datetime as dt
 import json
 import os
 import re
@@ -62,14 +63,20 @@ class Graph():
             self.IncDict = ModeDict['IncDict']
             self.PayDict = ModeDict['PayDict']
 
-        # set monthList
+        # set monthList(default: one year period)
         self.monthList = []
-        y = 2017
-        for m in range(9, 13):
-            self.monthList.append(str(str(y) + "-" + str(m).zfill(2)))
-        y = 2018
-        for m in range(1, int(datetime.now().strftime("%m")) + 1):
-            self.monthList.append(str(str(y) + "-" + str(m).zfill(2)))
+        dt_now = datetime.now()
+        y = dt_now.year - 1
+        m = dt_now.month + 1
+
+        def YM2str(year, month):
+            return str(str(year) + "-" + str(month).zfill(2))
+
+        for i in range(m, 13):
+            self.monthList.append(YM2str(y, i))
+        y += 1
+        for i in range(1, m):
+            self.monthList.append(YM2str(y, i))
 
         # setting matplotlib
         plt.rc('text', usetex=True)
