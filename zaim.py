@@ -3,7 +3,7 @@
 #
 # FileName: 	zaim
 # CreatedDate:  2017-12-04 19:10:34 +0900
-# LastModified: 2019-03-28 12:35:24 +0900
+# LastModified: 2019-05-23 16:44:34 +0900
 #
 
 import argparse
@@ -23,8 +23,8 @@ from graph import Graph
 from post import Post
 
 # authorize
-key_path = os.path.join(
-    os.path.abspath(os.path.dirname(__file__)), "input/key.csv")
+key_path = os.path.join(os.path.abspath(os.path.dirname(__file__)),
+                        "input/key.csv")
 key_data = pd.read_csv(key_path)
 consumer_key = key_data["consumer_key"].values[0]
 consumer_secret = key_data["consumer_secret"].values[0]
@@ -38,14 +38,16 @@ def main():
     parser = argparse.ArgumentParser(
         description=
         "Visualize household accounts in zaim.net as graphs and lists.")
-    parser.add_argument(
-        '-p',
-        '--place',
-        action='store_true',
-        help='search for KEYWORD in place',
-        default=False)
-    parser.add_argument(
-        '-i', '--input', action='store_true', help='Input data', default=False)
+    parser.add_argument('-p',
+                        '--place',
+                        action='store_true',
+                        help='search for KEYWORD in place',
+                        default=False)
+    parser.add_argument('-i',
+                        '--input',
+                        action='store_true',
+                        help='Input data',
+                        default=False)
     parser.add_argument(
         '-d',
         '--display',
@@ -55,22 +57,20 @@ def main():
         help='Display latest household accounts(NUM is the number of data)',
         const=10,
         metavar='NUM')
-    parser.add_argument(
-        '-m',
-        '--mode',
-        action='store',
-        choices=['payment', 'income', 'transfer'],
-        help='choice kind of movement of money',
-        default='payment')
-    parser.add_argument(
-        '-g',
-        '--graph',
-        metavar='YYYY-MM',
-        action='store',
-        nargs='?',
-        type=str,
-        help='select category and draw graph in a month',
-        const=datetime.now().strftime("%Y-%m"))
+    parser.add_argument('-m',
+                        '--mode',
+                        action='store',
+                        choices=['payment', 'income', 'transfer'],
+                        help='choice kind of movement of money',
+                        default='payment')
+    parser.add_argument('-g',
+                        '--graph',
+                        metavar='YYYY-MM',
+                        action='store',
+                        nargs='?',
+                        type=str,
+                        help='select category and draw graph in a month',
+                        const=datetime.now().strftime("%Y-%m"))
     parser.add_argument(
         '-b',
         '--balance-make',
@@ -93,12 +93,6 @@ def main():
     # constructor
     graph = Graph(Mdata, Cdata)
 
-    # draw relative payment graph
-    graph.RelativePayment()
-
-    # draw monthly category graph
-    graph.MonthlyCategoryGraph()
-
     # check option
     # input data
     if args.input:
@@ -106,6 +100,12 @@ def main():
         post.MakeInputData()
         post.PostData(auth)
         sys.exit(1)
+
+    # draw relative payment graph
+    graph.RelativePayment()
+
+    # draw monthly category graph
+    graph.MonthlyCategoryGraph()
 
     # draw category graph
     if args.graph is not None:
