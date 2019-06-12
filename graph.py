@@ -3,7 +3,7 @@
 #
 # FileName: 	graph
 # CreatedDate:  2018-04-13 14:12:23 +0900
-# LastModified: 2019-05-24 16:58:16 +0900
+# LastModified: 2019-06-12 14:23:54 +0900
 #
 
 import calendar
@@ -246,10 +246,7 @@ class Graph():
                        width=width,
                        label=InKey,
                        bottom=before))
-            if before.sum() == 0:
-                before = IncomeList[InKey]
-            else:
-                before = before.add(IncomeList[InKey])
+            before = before + IncomeList[InKey].values
 
         # draw Payment graph
         before = np.zeros(len(self.monthList))
@@ -261,10 +258,7 @@ class Graph():
                        width=width,
                        label=PayKey,
                        bottom=before))
-            if before.sum() == 0:
-                before = PaymentList[PayKey]
-            else:
-                before = before.add(PaymentList[PayKey])
+            before = before + IncomeList[InKey].values
 
         plt.title(r"Monthly Category Graph(income and payment)")
         plt.xlabel(r"month", fontsize=16)
