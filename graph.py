@@ -3,7 +3,7 @@
 #
 # FileName: 	graph
 # CreatedDate:  2018-04-13 14:12:23 +0900
-# LastModified: 2019-06-12 14:23:54 +0900
+# LastModified: 2019-06-29 19:59:56 +0900
 #
 
 import calendar
@@ -258,7 +258,7 @@ class Graph():
                        width=width,
                        label=PayKey,
                        bottom=before))
-            before = before + IncomeList[InKey].values
+            before = before + PaymentList[PayKey].values
 
         plt.title(r"Monthly Category Graph(income and payment)")
         plt.xlabel(r"month", fontsize=16)
