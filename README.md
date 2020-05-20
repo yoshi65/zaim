@@ -9,6 +9,41 @@ consumer_key,consumer_secret,access_token,access_secret
 hoge,hoge,hoge,hoge
 ```
 
+### Support to authorization
+1. `https://dev.zaim.net/`に登録して、アプリケーションを作る
+1. 得られたアプリケーションのコンシューマ ID, コンシューマシークレットを以下のフォーマットで`key.csv`に書き込む (access_token,access_secretの値はスクリプト実行後に記入される)
+    ```
+    consumer_key,consumer_secret,access_token,access_secret
+    hoge,hoge,hoge,hoge
+    ```
+1. スクリプトを実行
+    - `python auth.py`
+1. zaimアカウントの認証
+    - 実行結果に出力されたURLにアクセス
+      ```
+      auth link
+      https://auth.zaim.net/users/auth?oauth_token=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+      ```
+    - ログインして認証
+1. 認証完了後、以下のメッセージが表示され、ページが遷移しない
+    ```
+    認証が完了
+
+    お待ちください…しばらく待って画面が変わらない場合は、一つ前に戻って「ログイン」ボタンをタップするか info@zaim.net までご報告ください。
+    ```
+1. htmlを開き、`callback`を探す
+    ```
+    <div class="callback">https://www.zaim.net/?oauth_token=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx&oauth_verifier=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx<div class="callback_end"></div></div>
+    ```
+1. oauth_verifierを取得
+    ```
+    % grep "callback" tmp.html | sed "s/.*oauth_verifier=\(.*\)\<div.*callback.*/\1/g"
+    ```
+1. What is the PIN? 以下にoauth_verifierを入力すると、`key_tmp.csv`が出力される
+    ```
+    {'oauth_token': 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', 'oauth_token_secret': 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'}
+    ```
+
 ## Usage
 ```sh:zaim.py
 usage: zaim.py [-h] [-p] [-i] [-d [NUM]] [-m {payment,income,transfer}]
