@@ -3,7 +3,7 @@
 #
 # FileName: 	graph
 # CreatedDate:  2018-04-13 14:12:23 +0900
-# LastModified: 2019-06-29 19:59:56 +0900
+# LastModified: 2020-05-25 08:56:21 +0900
 #
 
 import calendar
@@ -79,8 +79,8 @@ class Graph():
             self.monthList.append(YM2str(y, i))
 
         # setting matplotlib
-        plt.rc('text', usetex=True)
-        plt.rc('font', family='serif')
+        # plt.rc('text', usetex=True)
+        plt.rc('font', family='IPAexGothic')
         plt.rc('xtick', direction='in')
         plt.rc('ytick', direction='in')
 
@@ -166,8 +166,8 @@ class Graph():
         ax.xaxis.set_tick_params(rotation=45)
         ax.xaxis.set_major_locator(ticker.MultipleLocator(7))
         # ax.grid(True)
-        plt.xlabel(r"date", fontsize=16)
-        plt.ylabel(r"money [yen]", fontsize=16)
+        plt.xlabel("date", fontsize=16)
+        plt.ylabel("money [yen]", fontsize=16)
         plt.tight_layout()
         plt.savefig(output_name)
         plt.close(fig)
@@ -213,8 +213,8 @@ class Graph():
                width=width,
                color="blue",
                label="Relative Payment")
-        plt.xlabel(r"month", fontsize=16)
-        plt.ylabel(r"money [yen]", fontsize=16)
+        plt.xlabel("month", fontsize=16)
+        plt.ylabel("money [yen]", fontsize=16)
         plt.legend(loc="best")
         plt.xticks(ran + width / 2, self.monthList, rotation=45)
         plt.tight_layout()
@@ -260,9 +260,9 @@ class Graph():
                        bottom=before))
             before = before + PaymentList[PayKey].values
 
-        plt.title(r"Monthly Category Graph(income and payment)")
-        plt.xlabel(r"month", fontsize=16)
-        plt.ylabel(r"money [yen]", fontsize=16)
+        plt.title("Monthly Category Graph(income and payment)")
+        plt.xlabel("month", fontsize=16)
+        plt.ylabel("money [yen]", fontsize=16)
         leg1 = plt.legend(handles=IncLabel,
                           bbox_to_anchor=(1.05, 1),
                           loc="upper left",
